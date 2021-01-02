@@ -23,4 +23,4 @@ def delimited_list(expr, delimiter=',', min=2, max=...):
 
 
 def mongo_expression(name, tokens):
-    return {f'${name}': tokens[0] if len(tokens) == 1 else tokens.asList()}
+    return {f'${name}': tokens.asList()}
