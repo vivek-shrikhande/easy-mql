@@ -1,9 +1,10 @@
 from pyparsing import Keyword, Optional, Suppress, White
 
 from easymql import Grammar
+from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.proxies import expression_proxy
-from easymql.utils import delimited_list, mongo_expression
+from easymql.utils import delimited_list
 
 
 class Cond(Grammar):
@@ -20,18 +21,14 @@ class Cond(Grammar):
         return {"$cond": {"if": tokens[0], "then": tokens[1], "else": tokens[2]}}
 
 
-class IfNull(Grammar):
+class IfNull(Grammar, ExpressionAction):
 
     grammar = (
-        Suppress(Keyword("IFNULL"))
+        Keyword("IF_NULL")
         + LPAREN
         + delimited_list(expression_proxy, min=2, max=2)
         + RPAREN
     )
-
-    @staticmethod
-    def action(tokens):
-        return mongo_expression("ifNull", tokens)
 
 
 class Case(Grammar):
