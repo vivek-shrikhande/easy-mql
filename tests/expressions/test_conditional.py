@@ -12,7 +12,7 @@ class TestConditionalExpression:
         ]
 
     def test_ifnull(self):
-        assert self.exp.parse('IFNULL(null, 0)') == [{'$ifNull': [None, 0]}]
+        assert self.exp.parse('IF_NULL(null, 0)') == [{'$ifNull': [None, 0]}]
 
     def test_switch(self):
         assert self.exp.parse(
