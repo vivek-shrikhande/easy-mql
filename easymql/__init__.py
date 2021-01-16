@@ -11,7 +11,7 @@ class Grammar(ParserElement):
         super().__init__()
         self.name = self.__class__.__name__
         try:
-            self.setParseAction(self.__class__.action)
+            self.setParseAction(self.action)
         except AttributeError:
             pass
 
