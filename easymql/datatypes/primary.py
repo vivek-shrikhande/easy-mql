@@ -1,6 +1,7 @@
 from pyparsing import Keyword, pyparsing_common, QuotedString, Regex
 
 from easymql import Grammar
+from easymql.basics import LPAREN, RPAREN
 
 
 class Null(Grammar):
@@ -89,11 +90,6 @@ class DatePart(Grammar):
             raise ValueError(f'{part}({value}) is out of range [{min}-{max}]')
 
 
-class Date(DatePart):
-
-    grammar = Regex(r'(?P<year>\d{4})(-(?P<month>\d{2})(-(?P<day>\d{2}))?)?')
-
-
 class Time(DatePart):
 
     grammar = Regex(
@@ -106,10 +102,30 @@ class TimeZone(DatePart):
     grammar = Regex(r'(Z|[+-](?P<tzhour>\d{2})(:?(?P<tzminute>\d{2}))?)?')
 
 
-class DateTime(DatePart):
+class Date(DatePart):
 
-    grammar = Regex(
-        r'(?P<year>\d{4})(-(?P<month>\d{2})(-(?P<day>\d{2}))?)?'
-        r'([T ](?P<hour>\d{2}):(?P<minute>\d{2})(:(?P<second>\d{2})(\.(?P<millisecond>\d{3}))?)?'
-        r'(Z|[+-](?P<tzhour>\d{2})(:?(?P<tzminute>\d{2}))?)?)?'
+    grammar = (
+        Keyword('DATE')
+        + LPAREN
+        + Regex(
+            r'"(?P<year>\d{4})(-(?P<month>\d{2})(-(?P<day>\d{2}))?)?'
+            r'([T ](?P<hour>\d{2}):(?P<minute>\d{2})(:(?P<second>\d{2})(\.(?P<millisecond>\d{3}))?)?'
+            r'(?P<timezone>(Z|[+-](?P<tzhour>\d{2})(:?(?P<tzminute>\d{2}))?))?)?"'
+        )
+        + RPAREN
     )
+
+    def action(self, tokens):
+        timezone = tokens.pop('timezone')
+        super().action(tokens)
+        obj = {}
+        for part in ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond']:
+            try:
+                value = int(tokens[part])
+            except (TypeError, ValueError):
+                pass
+            else:
+                obj[part] = value
+        if timezone is not None:
+            obj['timezone'] = timezone
+        return {'$dateFromParts': obj}
