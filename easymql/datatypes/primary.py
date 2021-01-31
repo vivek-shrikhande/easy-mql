@@ -104,15 +104,10 @@ class TimeZone(DatePart):
 
 class Date(DatePart):
 
-    grammar = (
-        Keyword('DATE')
-        + LPAREN
-        + Regex(
-            r'"(?P<year>\d{4})(-(?P<month>\d{2})(-(?P<day>\d{2}))?)?'
-            r'([T ](?P<hour>\d{2}):(?P<minute>\d{2})(:(?P<second>\d{2})(\.(?P<millisecond>\d{3}))?)?'
-            r'(?P<timezone>(Z|[+-](?P<tzhour>\d{2})(:?(?P<tzminute>\d{2}))?))?)?"'
-        )
-        + RPAREN
+    grammar = Regex(
+        r'D"(?P<year>\d{4})(-(?P<month>\d{2})(-(?P<day>\d{2}))?)?'
+        r'([T ](?P<hour>\d{2}):(?P<minute>\d{2})(:(?P<second>\d{2})(\.(?P<millisecond>\d{3}))?)?'
+        r'(?P<timezone>(Z|[+-](?P<tzhour>\d{2})(:?(?P<tzminute>\d{2}))?))?)?"'
     )
 
     def action(self, tokens):
