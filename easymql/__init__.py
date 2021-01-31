@@ -9,11 +9,17 @@ class Grammar(ParserElement):
 
     def __init__(self):
         super().__init__()
-        self.name = self.__class__.__name__
+        self.set_name()
         try:
             self.setParseAction(self.action)
         except AttributeError:
             pass
+
+    def set_name(self):
+        if hasattr(self.__class__, 'name'):
+            return self.__class__.grammar.setName(self.__class__.name)
+        else:
+            return self.__class__.grammar.setName(self.__class__.__name__)
 
     def parseImpl(self, input_string, loc, do_actions=True):
         return self.__class__.grammar.parseImpl(input_string, loc, do_actions)
