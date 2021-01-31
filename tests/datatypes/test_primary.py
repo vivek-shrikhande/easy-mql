@@ -126,14 +126,14 @@ line"'''
 
     def test_date(self):
         date = Date()
-        assert date.parse('DATE("2021")') == [{'$dateFromParts': {'year': 2021}}]
-        assert date.parse('DATE("2021-01")') == [
+        assert date.parse('D"2021"') == [{'$dateFromParts': {'year': 2021}}]
+        assert date.parse('D"2021-01"') == [
             {'$dateFromParts': {'month': 1, 'year': 2021}}
         ]
-        assert date.parse('DATE("2021-01-01")') == [
+        assert date.parse('D"2021-01-01"') == [
             {'$dateFromParts': {'day': 1, 'month': 1, 'year': 2021}}
         ]
-        assert date.parse('DATE("2021-01-01T12:14")') == [
+        assert date.parse('D"2021-01-01T12:14"') == [
             {
                 '$dateFromParts': {
                     'day': 1,
@@ -144,7 +144,7 @@ line"'''
                 }
             }
         ]
-        assert date.parse('DATE("2021-01-01 12:14")') == [
+        assert date.parse('D"2021-01-01 12:14"') == [
             {
                 '$dateFromParts': {
                     'year': 2021,
@@ -155,7 +155,7 @@ line"'''
                 }
             }
         ]
-        assert date.parse('DATE("2021-01-01T12:14:00")') == [
+        assert date.parse('D"2021-01-01T12:14:00"') == [
             {
                 '$dateFromParts': {
                     'year': 2021,
@@ -167,7 +167,7 @@ line"'''
                 }
             }
         ]
-        assert date.parse('DATE("2021-01-01T12:14:00Z")') == [
+        assert date.parse('D"2021-01-01T12:14:00Z"') == [
             {
                 '$dateFromParts': {
                     'year': 2021,
@@ -180,7 +180,7 @@ line"'''
                 }
             }
         ]
-        assert date.parse('DATE("2021-01-01T12:14:00-05")') == [
+        assert date.parse('D"2021-01-01T12:14:00-05"') == [
             {
                 '$dateFromParts': {
                     'year': 2021,
@@ -193,7 +193,7 @@ line"'''
                 }
             }
         ]
-        assert date.parse('DATE("2021-01-01T12:14:00+05:30")') == [
+        assert date.parse('D"2021-01-01T12:14:00+05:30"') == [
             {
                 '$dateFromParts': {
                     'year': 2021,
@@ -206,7 +206,7 @@ line"'''
                 }
             }
         ]
-        assert date.parse('DATE("2021-01-01T12:14:00+0530")') == [
+        assert date.parse('D"2021-01-01T12:14:00+0530"') == [
             {
                 '$dateFromParts': {
                     'year': 2021,
@@ -219,7 +219,7 @@ line"'''
                 }
             }
         ]
-        assert date.parse('DATE("2021-01-15T12:30:59.932-12:00")') == [
+        assert date.parse('D"2021-01-15T12:30:59.932-12:00"') == [
             {
                 '$dateFromParts': {
                     'year': 2021,
@@ -233,45 +233,48 @@ line"'''
                 }
             }
         ]
+        # space between D and date string
+        with pytest.raises(pyparsing.ParseException):
+            date.parse('D "2021-01-01 12:14:00+0530"')
         # double space
         with pytest.raises(pyparsing.ParseException):
-            date.parse('DATE("2021-01-01  12:14:00+0530")')
+            date.parse('D"2021-01-01  12:14:00+0530"')
         # whitespaces
         with pytest.raises(pyparsing.ParseException):
-            date.parse('DATE("2021 - 01 - 01T12 : 14 : 00 + 0530")')
+            date.parse('D"2021 - 01 - 01T12 : 14 : 00 + 0530"')
         # year out of range
         for year in [-1, 10000]:
             with pytest.raises((pyparsing.ParseException, ValueError)):
-                date.parse(f'DATE("{year}")')
+                date.parse(f'D"{year}"')
         # month out of range
         for month in [0, 13]:
             with pytest.raises((pyparsing.ParseException, ValueError)):
-                date.parse(f'DATE("1970-{month}")')
+                date.parse(f'D"1970-{month}"')
         # day out of range
         for day in [0, 32]:
             with pytest.raises((pyparsing.ParseException, ValueError)):
-                date.parse(f'DATE("2000-12-{day}")')
+                date.parse(f'D"2000-12-{day}"')
         # hour out of range
         for hour in [-1, 24]:
             with pytest.raises((pyparsing.ParseException, ValueError)):
-                date.parse(f'DATE("2021-01-15 {hour}:30")')
+                date.parse(f'D"2021-01-15 {hour}:30"')
         # minute out of range
         for minute in [-1, 60]:
             with pytest.raises((pyparsing.ParseException, ValueError)):
-                date.parse(f'DATE("2021-01-15T12:{minute}")')
+                date.parse(f'D"2021-01-15T12:{minute}"')
         # second out of range
         for second in [-1, 60]:
             with pytest.raises((pyparsing.ParseException, ValueError)):
-                date.parse(f'DATE("2021-01-15 12:30:{second}")')
+                date.parse(f'D"2021-01-15 12:30:{second}"')
         # millisecond out of range
         for millisecond in [-1, 1000]:
             with pytest.raises((pyparsing.ParseException, ValueError)):
-                date.parse(f'DATE("2021-01-15T12:30:59.{millisecond}")')
+                date.parse(f'D"2021-01-15T12:30:59.{millisecond}"')
         # hour out of range
         for hour in [-1, 24]:
             with pytest.raises((pyparsing.ParseException, ValueError)):
-                date.parse(f'DATE("2021-01-15T12:30:59.932+{hour}:30")')
+                date.parse(f'D"2021-01-15T12:30:59.932+{hour}:30"')
         # minute out of range
         for minute in [-1, 60]:
             with pytest.raises((pyparsing.ParseException, ValueError)):
-                date.parse(f'DATE("2021-01-15T12:30:59.932-12:{minute}")')
+                date.parse(f'D"2021-01-15T12:30:59.932-12:{minute}"')
