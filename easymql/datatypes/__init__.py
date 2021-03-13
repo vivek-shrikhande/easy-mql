@@ -7,4 +7,4 @@ from easymql.proxies import data_type_proxy
 class DataType(Grammar):
 
     grammar = data_type_proxy
-    grammar <<= Array() | Boolean() | Date() | Object() | Number() | String() | Null()
+    grammar <<= Array | Boolean | Date | Object | Number | String | Null
