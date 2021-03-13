@@ -1,70 +1,70 @@
-from pyparsing import Keyword, pyparsing_common, QuotedString, Regex
+from pyparsing import pyparsing_common
 
-from easymql import Grammar
-from easymql.basics import LPAREN, RPAREN
+from easymql import Grammar, Adapter
+from easymql.core import Keyword, QuotedString, Regex
+from easymql.exc import DatePartOutOfRangeError
+from easymql.utils import cast_to_int
 
 
 class Null(Grammar):
 
     grammar = Keyword('null')
 
-    @staticmethod
-    def action():
-        return [None]
+    @classmethod
+    def action(cls, tokens):
+        return cls(None)
 
 
 class String(Grammar):
 
     grammar = QuotedString(quoteChar='"', escChar='\\', multiline=True)
 
-    @staticmethod
-    def action(token):
-        return token
-
-
-class BooleanTrue(Grammar):
-
-    grammar = Keyword('true')
-
-    @staticmethod
-    def action():
-        return [True]
-
-
-class BooleanFalse(Grammar):
-
-    grammar = Keyword('false')
-
-    @staticmethod
-    def action():
-        return [False]
+    @classmethod
+    def action(cls, token):
+        return cls(token[0])
 
 
 class Boolean(Grammar):
 
-    grammar = BooleanTrue() | BooleanFalse()
+    grammar = Keyword('true') | Keyword('false')
 
-
-class Integer(Grammar):
-
-    grammar = pyparsing_common.signed_integer
-
-    @staticmethod
-    def action(token):
-        return int(token[0])
-
-
-class Decimal(Grammar):
-
-    grammar = pyparsing_common.sci_real | pyparsing_common.real
+    @classmethod
+    def action(cls, token):
+        return Boolean(token[0] == 'true')
 
 
 class Number(Grammar):
+    pass
 
-    grammar = pyparsing_common.number
+
+class Integer(Number):
+
+    grammar = Adapter(pyparsing_common.signed_integer)
+
+    @classmethod
+    def action(cls, token):
+        return cls(int(token[0]))
 
 
-class DatePart(Grammar):
+class Decimal(Number):
+
+    grammar = Adapter(pyparsing_common.sci_real | pyparsing_common.real)
+
+    @classmethod
+    def action(cls, token):
+        return cls(token[0])
+
+
+Number.grammar = Decimal | Integer
+
+
+class Date(Grammar):
+
+    grammar = Regex(
+        r'D"(?P<year>\d{4})(-(?P<month>\d{2})(-(?P<day>\d{2}))?)?'
+        r'([T ](?P<hour>\d{2}):(?P<minute>\d{2})(:(?P<second>\d{2})(\.(?P<millisecond>\d{3}))?)?'
+        r'(?P<timezone>(Z|[+-](?P<tzhour>\d{2})(:?(?P<tzminute>\d{2}))?))?)?"'
+    )
 
     range_map = {
         'year': {'min': 0, 'max': 9999},
@@ -74,53 +74,94 @@ class DatePart(Grammar):
         'minute': {'min': 0, 'max': 59},
         'second': {'min': 0, 'max': 59},
         'millisecond': {'min': 0, 'max': 999},
-        'tzhour': {'min': 0, 'max': 23},
+        'tzhour': {'min': -26, 'max': 26},
         'tzminute': {'min': 0, 'max': 59},
     }
 
-    def action(self, tokens):
-        for k, v in tokens.items():
+    def __init__(
+        self,
+        year,
+        month=1,
+        day=1,
+        hour=0,
+        minute=0,
+        second=0,
+        millisecond=0,
+        timezone='Z',
+    ):
+        self.year = year
+        self.month = month
+        self.day = day
+        self.hour = hour
+        self.minute = minute
+        self.second = second
+        self.millisecond = millisecond
+        self.timezone = timezone
+        self.tzhour = 0
+        self.tzminute = 0
+        if 4 < len(timezone) < 7:  # [+-]HH:MM or [+-]HHMM
+            self.tzhour = int(timezone[:3])
+            self.tzminute = int(timezone[-2:])
+        elif len(timezone) == 3:  # [+-]HH
+            self.tzhour = int(timezone)
+
+        self.validate()
+
+        super(Date, self).__init__(
+            {
+                '$dateFromParts': {
+                    part: getattr(self, part)
+                    for part in [
+                        'year',
+                        'month',
+                        'day',
+                        'hour',
+                        'minute',
+                        'second',
+                        'millisecond',
+                        'timezone',
+                    ]
+                }
+            }
+        )
+
+    def validate(self):
+        for part, range in self.range_map.items():
+            value = getattr(self, part)
+            min, max = range['min'], range['max']
             try:
-                self.check_range(k.title(), int(v), **self.range_map[k])
+                if value < min or value > max:
+                    raise DatePartOutOfRangeError(
+                        f'{part}({value}) is out of range [{min} - {max}]'
+                    )
             except TypeError:
                 pass
 
-    def check_range(self, part, value, min, max):
-        if value < min or value > max:
-            raise ValueError(f'{part}({value}) is out of range [{min}-{max}]')
+    def __repr__(self):
+        arg_str = ', '.join(
+            [
+                repr(getattr(self, p))
+                for p in [
+                    'year',
+                    'month',
+                    'day',
+                    'hour',
+                    'minute',
+                    'second',
+                    'millisecond',
+                    'timezone',
+                ]
+            ]
+        )
+        return f'Date({arg_str})'
 
-
-class Time(DatePart):
-
-    grammar = Regex(
-        r'(?P<hour>\d{2}):(?P<minute>\d{2})(:(?P<second>\d{2})(\.(?P<millisecond>\d{3}))?)?'
-    )
-
-
-class TimeZone(DatePart):
-
-    grammar = Regex(r'(Z|[+-](?P<tzhour>\d{2})(:?(?P<tzminute>\d{2}))?)?')
-
-
-class Date(DatePart):
-
-    grammar = Regex(
-        r'D"(?P<year>\d{4})(-(?P<month>\d{2})(-(?P<day>\d{2}))?)?'
-        r'([T ](?P<hour>\d{2}):(?P<minute>\d{2})(:(?P<second>\d{2})(\.(?P<millisecond>\d{3}))?)?'
-        r'(?P<timezone>(Z|[+-](?P<tzhour>\d{2})(:?(?P<tzminute>\d{2}))?))?)?"'
-    )
-
-    def action(self, tokens):
-        timezone = tokens.pop('timezone')
-        super().action(tokens)
-        obj = {}
-        for part in ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond']:
-            try:
-                value = int(tokens[part])
-            except (TypeError, ValueError):
-                pass
-            else:
-                obj[part] = value
-        if timezone is not None:
-            obj['timezone'] = timezone
-        return {'$dateFromParts': obj}
+    @classmethod
+    def action(cls, tokens):
+        kwargs = {
+            p: cast_to_int(tokens[p])
+            for p in ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond']
+            if tokens[p] is not None
+        }
+        if tokens['timezone'] is not None:
+            kwargs['timezone'] = tokens['timezone']
+        return cls(**kwargs)
