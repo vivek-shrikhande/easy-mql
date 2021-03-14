@@ -1,4 +1,4 @@
-from pyparsing import Keyword, Optional, Suppress, White
+from easymql.core import Keyword, Optional, Suppress, White
 
 from easymql import Grammar
 from easymql.actions import ExpressionAction
@@ -69,4 +69,4 @@ class Case(Grammar):
 
 class ConditionalExpression(Grammar):
 
-    grammar = Cond() | IfNull() | Case()
+    grammar = Cond | IfNull | Case

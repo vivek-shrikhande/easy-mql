@@ -1,4 +1,4 @@
-from pyparsing import Keyword
+from easymql.core import Keyword
 
 from easymql import Grammar
 from easymql.actions import ExpressionAction
@@ -24,4 +24,4 @@ class Or(Grammar, ExpressionAction):
 
 class BooleanExpression(Grammar):
 
-    grammar = And() | Not() | Or()
+    grammar = And | Not | Or
