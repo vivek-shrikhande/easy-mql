@@ -18,7 +18,9 @@ class TestDelimitedList:
         assert dlist.parseString('a, b').asList() == ['a', 'b']
         with raises(ParseException):
             assert dlist.parseString('a, b, c', parseAll=True).asList() == [
-                'a', 'b', 'c'
+                'a',
+                'b',
+                'c',
             ]
 
     def test_min_2_max_4(self):
@@ -32,7 +34,11 @@ class TestDelimitedList:
         assert dlist.parseString('a, b, c, d').asList() == ['a', 'b', 'c', 'd']
         with raises(ParseException):
             assert dlist.parseString('a, b, c, d, e', parseAll=True).asList() == [
-                'a', 'b', 'c', 'd', 'e'
+                'a',
+                'b',
+                'c',
+                'd',
+                'e',
             ]
 
     def test_min_2_max_ellipsis(self):
@@ -45,7 +51,11 @@ class TestDelimitedList:
         assert dlist.parseString('a, b, c').asList() == ['a', 'b', 'c']
         assert dlist.parseString('a, b, c, d').asList() == ['a', 'b', 'c', 'd']
         assert dlist.parseString('a, b, c, d, e', parseAll=True).asList() == [
-            'a', 'b', 'c', 'd', 'e'
+            'a',
+            'b',
+            'c',
+            'd',
+            'e',
         ]
 
     def test_min_1_max_1(self):
@@ -57,7 +67,9 @@ class TestDelimitedList:
             assert dlist.parseString('a, b', parseAll=True).asList() == ['a', 'b']
         with raises(ParseException):
             assert dlist.parseString('a, b, c', parseAll=True).asList() == [
-                'a', 'b', 'c'
+                'a',
+                'b',
+                'c',
             ]
 
     def test_min_2_max_2(self):
@@ -69,7 +81,9 @@ class TestDelimitedList:
         assert dlist.parseString('a, b').asList() == ['a', 'b']
         with raises(ParseException):
             assert dlist.parseString('a, b, c', parseAll=True).asList() == [
-                'a', 'b', 'c'
+                'a',
+                'b',
+                'c',
             ]
 
     def test_min_ellipsis(self):
