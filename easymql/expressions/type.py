@@ -1,4 +1,4 @@
-from pyparsing import Keyword
+from easymql.core import Keyword
 
 from easymql import Grammar
 from easymql.actions import ExpressionAction
@@ -59,14 +59,14 @@ class Type(Grammar, ExpressionAction):
 class TypeExpression(Grammar):
 
     grammar = (
-        IsNumber()
-        | ToBool()
-        | ToDate()
-        | ToDecimal()
-        | ToDouble()
-        | ToInt()
-        | ToLong()
-        | ToObjectId()
-        | ToString()
-        | Type()
+        IsNumber
+        | ToBool
+        | ToDate
+        | ToDecimal
+        | ToDouble
+        | ToInt
+        | ToLong
+        | ToObjectId
+        | ToString
+        | Type
     )

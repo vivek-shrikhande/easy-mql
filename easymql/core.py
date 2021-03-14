@@ -84,7 +84,7 @@ class Regex(Adapter):
 
 class Empty(Adapter):
     def __init__(self):
-        super(Empty, self).__init__(PpEmpty)
+        super(Empty, self).__init__(PpEmpty())
 
 
 class Literal(Adapter):

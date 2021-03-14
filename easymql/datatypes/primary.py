@@ -14,6 +14,11 @@ class Null(Grammar):
     def action(cls, tokens):
         return cls(None)
 
+    def __eq__(self, other):
+        if super().__eq__(other) is False:
+            return isinstance(other, type(None)) and self.value is other
+        return True
+
 
 class String(Grammar):
 
@@ -23,6 +28,11 @@ class String(Grammar):
     def action(cls, token):
         return cls(token[0])
 
+    def __eq__(self, other):
+        if super().__eq__(other) is False:
+            return isinstance(other, str) and self.value == other
+        return True
+
 
 class Boolean(Grammar):
 
@@ -31,6 +41,11 @@ class Boolean(Grammar):
     @classmethod
     def action(cls, token):
         return Boolean(token[0] == 'true')
+
+    def __eq__(self, other):
+        if super().__eq__(other) is False:
+            return isinstance(other, bool) and self.value == other
+        return True
 
 
 class Number(Grammar):
@@ -45,6 +60,11 @@ class Integer(Number):
     def action(cls, token):
         return cls(int(token[0]))
 
+    def __eq__(self, other):
+        if super().__eq__(other) is False:
+            return isinstance(other, int) and self.value == other
+        return True
+
 
 class Decimal(Number):
 
@@ -54,6 +74,10 @@ class Decimal(Number):
     def action(cls, token):
         return cls(token[0])
 
+    def __eq__(self, other):
+        if super().__eq__(other) is False:
+            return isinstance(other, float) and self.value == other
+        return True
 
 Number.grammar = Decimal | Integer
 
@@ -165,3 +189,8 @@ class Date(Grammar):
         if tokens['timezone'] is not None:
             kwargs['timezone'] = tokens['timezone']
         return cls(**kwargs)
+
+
+if __name__ == '__main__':
+    print(Integer(1) == 1)
+    print([Integer(1)] == [1])

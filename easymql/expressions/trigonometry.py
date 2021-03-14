@@ -1,4 +1,4 @@
-from pyparsing import Keyword
+from easymql.core import Keyword
 
 from easymql import Grammar
 from easymql.actions import ExpressionAction
@@ -75,16 +75,16 @@ class RadiansToDegrees(Grammar, ExpressionAction):
 class TrigonometryExpression(Grammar):
 
     grammar = (
-        Sin()
-        | Cos()
-        | Tan()
-        | Asin()
-        | Acos()
-        | Atan()
-        | Atan2()
-        | Asinh()
-        | Acosh()
-        | Atanh()
-        | DegreesToRadians()
-        | RadiansToDegrees()
+        Sin
+        | Cos
+        | Tan
+        | Asin
+        | Acos
+        | Atan
+        | Atan2
+        | Asinh
+        | Acosh
+        | Atanh
+        | DegreesToRadians
+        | RadiansToDegrees
     )
