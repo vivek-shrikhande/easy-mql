@@ -190,8 +190,3 @@ class Date(Grammar):
         if tokens['timezone'] is not None:
             kwargs['timezone'] = tokens['timezone']
         return cls(**kwargs)
-
-
-if __name__ == '__main__':
-    print(Integer(1) == 1)
-    print([Integer(1)] == [1])
