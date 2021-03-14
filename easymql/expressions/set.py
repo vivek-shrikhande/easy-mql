@@ -40,10 +40,7 @@ class SetIntersection(Grammar, ExpressionAction):
 class SetIsSubset(Grammar, ExpressionAction):
 
     grammar = (
-        Keyword('SET_IS_SUBSET')
-        + LPAREN
-        + delimited_list(Array, min=2, max=2)
-        + RPAREN
+        Keyword('SET_IS_SUBSET') + LPAREN + delimited_list(Array, min=2, max=2) + RPAREN
     )
 
 

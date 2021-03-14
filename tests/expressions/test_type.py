@@ -45,7 +45,9 @@ class TestTypeExpression:
             self.exp.parse('TO_LONG()')
 
     def test_to_object_id(self):
-        assert self.exp.parse('TO_OBJECT_ID("5ab9cbfa31c2ab715d42129e")') == {'$toObjectId': ["5ab9cbfa31c2ab715d42129e"]}
+        assert self.exp.parse('TO_OBJECT_ID("5ab9cbfa31c2ab715d42129e")') == {
+            '$toObjectId': ["5ab9cbfa31c2ab715d42129e"]
+        }
 
         with raises(ParseException):
             self.exp.parse('TO_OBJECT_ID()')

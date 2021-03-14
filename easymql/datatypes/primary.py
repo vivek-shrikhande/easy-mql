@@ -79,6 +79,7 @@ class Decimal(Number):
             return isinstance(other, float) and self.value == other
         return True
 
+
 Number.grammar = Decimal | Integer
 
 
