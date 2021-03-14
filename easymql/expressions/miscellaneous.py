@@ -1,4 +1,4 @@
-from pyparsing import Keyword
+from easymql.core import Keyword
 
 from easymql import Grammar
 from easymql.actions import ExpressionAction
@@ -17,9 +17,9 @@ class Random(Grammar, ExpressionAction):
 
 class SampleRate(Grammar, ExpressionAction):
 
-    grammar = Keyword("SAMPLE_RATE") + LPAREN + Decimal() + RPAREN
+    grammar = Keyword("SAMPLE_RATE") + LPAREN + Decimal + RPAREN
 
 
 class MiscellaneousExpression(Grammar):
 
-    grammar = Random() | SampleRate()
+    grammar = Random | SampleRate

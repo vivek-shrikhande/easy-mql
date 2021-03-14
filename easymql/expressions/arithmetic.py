@@ -1,4 +1,4 @@
-from pyparsing import Keyword
+from easymql.core import Keyword
 
 from easymql import Grammar
 from easymql.actions import ExpressionAction
@@ -125,20 +125,20 @@ class Trunc(Grammar, ExpressionAction):
 class ArithmeticExpression(Grammar):
 
     grammar = (
-        Abs()
-        | Add()
-        | Ceil()
-        | Divide()
-        | Exp()
-        | Floor()
-        | Ln()
-        | Log()
-        | Log10()
-        | Mod()
-        | Multiply()
-        | Pow()
-        | Round()
-        | Sqrt()
-        | Subtract()
-        | Trunc()
+        Abs
+        | Add
+        | Ceil
+        | Divide
+        | Exp
+        | Floor
+        | Ln
+        | Log
+        | Log10
+        | Mod
+        | Multiply
+        | Pow
+        | Round
+        | Sqrt
+        | Subtract
+        | Trunc
     )

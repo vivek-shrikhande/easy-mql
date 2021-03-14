@@ -1,4 +1,4 @@
-from pyparsing import Keyword
+from easymql.core import Keyword
 
 from easymql import Grammar
 from easymql.actions import ExpressionAction
@@ -16,4 +16,4 @@ class BsonSize(Grammar, ExpressionAction):
 
 class DataSizeExpression(Grammar):
 
-    grammar = BinarySize() | BsonSize()
+    grammar = BinarySize | BsonSize

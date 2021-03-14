@@ -15,13 +15,13 @@ class Expression(Grammar):
 
     grammar = expression_proxy
     grammar <<= (
-        ArithmeticExpression()
-        | BooleanExpression()
-        | ConditionalExpression()
-        | DataSizeExpression()
-        | MiscellaneousExpression()
-        | SetExpression()
-        | TrigonometryExpression()
-        | TypeExpression()
-        | DataType()
+        ArithmeticExpression
+        | BooleanExpression
+        | ConditionalExpression
+        | DataSizeExpression
+        | MiscellaneousExpression
+        | SetExpression
+        | TrigonometryExpression
+        | TypeExpression
+        | DataType
     )
