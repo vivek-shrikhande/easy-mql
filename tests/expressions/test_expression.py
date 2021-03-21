@@ -242,5 +242,10 @@ class TestInfixExpression:
 
     def test_all(self):
         # should keep adding more
-        assert exp.parse('3 < NOT 6 AND 3-2-1') == {'$and': [{'$lt': [3, {'$not': [6]}]}, {'$subtract': [{'$subtract': [3, 2]}, 1]}]}
+        assert exp.parse('3 < NOT 6 AND 3-2-1') == {
+            '$and': [
+                {'$lt': [3, {'$not': [6]}]},
+                {'$subtract': [{'$subtract': [3, 2]}, 1]},
+            ]
+        }
         assert exp.parse('6')
