@@ -9,6 +9,9 @@ from pyparsing import (
     Regex as PpRegex,
     Optional as PpOptional,
     White as PpWhite,
+    oneOf,
+    infixNotation as PpInfixNotation,
+    opAssoc as OpAssoc,  # noqa
 )
 
 from easymql import Adapter
@@ -100,3 +103,26 @@ class Optional(Adapter):
 class White(Adapter):
     def __init__(self, ws=" \t\r\n", min=1, max=0, exact=0):
         super(White, self).__init__(PpWhite(ws, min, max, exact))
+
+
+class OneOf(Adapter):
+    def __init__(self, literals, case_less=False, use_regex=True, as_keyword=False):
+        super(OneOf, self).__init__(oneOf(literals, case_less, use_regex, as_keyword))
+
+
+class InfixExpression(Adapter):
+    def __init__(
+        self,
+        base_expr,
+        precedence_list,
+        lparen=Suppress(Literal('(')),
+        rparen=Suppress(Literal(')')),
+    ):
+        super(InfixExpression, self).__init__(
+            PpInfixNotation(
+                base_expr._grammar,
+                [(p[0]._grammar, *p[1:]) for p in precedence_list],
+                lparen._grammar,
+                rparen._grammar,
+            )
+        )
