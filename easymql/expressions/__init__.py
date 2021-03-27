@@ -13,8 +13,7 @@ from easymql.core import InfixExpression, OpAssoc, OneOf, Keyword
 
 class FuncExpression(Grammar):
 
-    grammar = expression_proxy
-    grammar <<= (
+    grammar = (
         ArithmeticExpression
         | ConditionalExpression
         | DataSizeExpression
@@ -69,7 +68,8 @@ def infix_action(tokens):
 
 class Expression(Grammar):
 
-    grammar = InfixExpression(
+    grammar = expression_proxy
+    grammar <<= InfixExpression(
         FuncExpression,
         [
             (Keyword('NOT'), 1, OpAssoc.RIGHT, lambda token: {'$not': [token[0][-1]]}),
