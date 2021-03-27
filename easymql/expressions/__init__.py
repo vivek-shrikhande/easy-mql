@@ -1,8 +1,11 @@
 from easymql import Grammar
 from easymql.datatypes import DataType
 from easymql.expressions.arithmetic import ArithmeticExpression
+from easymql.expressions.comparison import Cmp
 from easymql.expressions.conditional import ConditionalExpression
 from easymql.expressions.datasize import DataSizeExpression
+from easymql.expressions.miscellaneous import MiscellaneousExpression
+from easymql.expressions.object import MergeObjects, ObjectToArray
 from easymql.expressions.set import SetExpression
 from easymql.expressions.trigonometry import TrigonometryExpression
 from easymql.expressions.type import TypeExpression
@@ -14,12 +17,14 @@ from easymql.expressions.others import FieldPath
 
 class FuncExpression(Grammar):
 
-    grammar = expression_proxy
-    grammar <<= (
+    grammar = (
         ArithmeticExpression
         | ConditionalExpression
+        | Cmp
         | DataSizeExpression
         | MiscellaneousExpression
+        | MergeObjects
+        | ObjectToArray
         | SetExpression
         | TrigonometryExpression
         | TypeExpression
@@ -71,7 +76,8 @@ def infix_action(tokens):
 
 class Expression(Grammar):
 
-    grammar = InfixExpression(
+    grammar = expression_proxy
+    grammar <<= InfixExpression(
         FuncExpression,
         [
             (Keyword('NOT'), 1, OpAssoc.RIGHT, lambda token: {'$not': [token[0][-1]]}),
