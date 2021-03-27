@@ -8,7 +8,6 @@ from easymql.stages import Stages
 
 
 class TestStages:
-
     def test_add_fields(self):
         assert Stages.parse('ADD FIELDS "item" AS _id, "fruit" AS item;') == {
             '$addFields': {'_id': 'item', 'item': 'fruit'}
@@ -16,9 +15,9 @@ class TestStages:
         assert Stages.parse(
             'ADD FIELDS "sumScore" AS totalScore, "sumQuiz" AS totalQuizScore;'
         ) == {'$addFields': {'totalScore': 'sumScore', 'totalQuizScore': 'sumQuiz'}}
-        assert Stages.parse(
-            'ADD FIELDS 1+3 AS totalScore;'
-        ) == {'$addFields': {'totalScore': {"$add": [1, 3]}}}
+        assert Stages.parse('ADD FIELDS 1+3 AS totalScore;') == {
+            '$addFields': {'totalScore': {"$add": [1, 3]}}
+        }
         with raises(ParseException):
             Stages.parse('ADD FIELDS ;')  # Ask
 
@@ -35,8 +34,19 @@ class TestStages:
             Stages.parse('LIMIT ;')
 
     def test_match(self):
-        assert Stages.parse('MATCH \'author\' = "dave";') == {'$match': {'$expr': {'$eq': ['$author', 'dave']}}}
-        assert Stages.parse("MATCH 'score' > 20 OR 'score' < 90;") == {'$match': {'$expr': {'$or': [{'$gt': ['$score', Integer(20)]}, {'$lt': ['$score', Integer(90)]}]}}}
+        assert Stages.parse('MATCH \'author\' = "dave";') == {
+            '$match': {'$expr': {'$eq': ['$author', 'dave']}}
+        }
+        assert Stages.parse("MATCH 'score' > 20 OR 'score' < 90;") == {
+            '$match': {
+                '$expr': {
+                    '$or': [
+                        {'$gt': ['$score', Integer(20)]},
+                        {'$lt': ['$score', Integer(90)]},
+                    ]
+                }
+            }
+        }
         with raises(ParseException):
             Stages.parse('MATCH ;')
 
@@ -56,12 +66,8 @@ class TestStages:
             Stages.parse('SKIP ;')
 
     def test_sort(self):
-        assert Stages.parse("SORT BY 'field1' ASC;") == {
-            '$sort': {'field1': 1}
-        }
-        assert Stages.parse("SORT BY 'field1' DESC;") == {
-            '$sort': {'field1': -1}
-        }
+        assert Stages.parse("SORT BY 'field1' ASC;") == {'$sort': {'field1': 1}}
+        assert Stages.parse("SORT BY 'field1' DESC;") == {'$sort': {'field1': -1}}
         assert Stages.parse("SORT BY 'field1' ASC, 'field2' DESC;") == {
             '$sort': {'field1': 1, 'field2': -1}
         }

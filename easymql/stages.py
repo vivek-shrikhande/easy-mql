@@ -157,13 +157,5 @@ class SortByCount(Grammar):
 class Stages(Grammar):
 
     grammar = (
-        AddFields
-        | Count
-        | Limit
-        | Match
-        | Sample
-        | Set
-        | Skip
-        | Sort
-        | SortByCount
+        AddFields | Count | Limit | Match | Sample | Set | Skip | Sort | SortByCount
     )
