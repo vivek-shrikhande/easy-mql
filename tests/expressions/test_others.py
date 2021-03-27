@@ -20,4 +20,3 @@ line'"""
         )
         with raises(ParseException):
             assert FieldPath.parse('"hello"') == "$hello"
-
