@@ -9,6 +9,7 @@ from easymql.expressions.type import TypeExpression
 from easymql.proxies import expression_proxy
 from easymql.expressions.miscellaneous import MiscellaneousExpression
 from easymql.core import InfixExpression, OpAssoc, OneOf, Keyword
+from easymql.expressions.others import FieldPath
 
 
 class FuncExpression(Grammar):
@@ -23,6 +24,7 @@ class FuncExpression(Grammar):
         | TrigonometryExpression
         | TypeExpression
         | DataType
+        | FieldPath
     )
 
 
