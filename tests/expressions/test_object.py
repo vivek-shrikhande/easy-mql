@@ -20,7 +20,9 @@ class TestObjectExpression:
             self.exp.parse('MERGE_OBJECTS({"a": 1})')
 
     def test_object_to_array(self):
-        assert self.exp.parse('OBJECT_TO_ARRAY({"item": "foo", "qty": 25})') == { '$objectToArray': { 'item': 'foo', 'qty': 25 } }
+        assert self.exp.parse('OBJECT_TO_ARRAY({"item": "foo", "qty": 25})') == {
+            '$objectToArray': {'item': 'foo', 'qty': 25}
+        }
         with raises(ParseException):
             self.exp.parse('OBJECT_TO_ARRAY({"item": "foo", "qty": 25}, {"a": 1})')
         with raises(ParseException):

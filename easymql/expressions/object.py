@@ -9,7 +9,9 @@ from easymql.utils import delimited_list
 
 class MergeObjects(Grammar, ExpressionAction):
 
-    grammar = Keyword("MERGE_OBJECTS") + LPAREN + delimited_list(expression_proxy) + RPAREN
+    grammar = (
+        Keyword("MERGE_OBJECTS") + LPAREN + delimited_list(expression_proxy) + RPAREN
+    )
 
 
 class ObjectToArray(Grammar):
@@ -18,4 +20,4 @@ class ObjectToArray(Grammar):
 
     @classmethod
     def action(cls, tokens):
-        return { '$objectToArray': tokens[1] }
+        return {'$objectToArray': tokens[1]}
