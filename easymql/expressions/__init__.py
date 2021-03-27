@@ -1,5 +1,4 @@
 from easymql import Grammar
-from easymql.core import InfixExpression, OpAssoc, OneOf, Keyword
 from easymql.datatypes import DataType
 from easymql.expressions.arithmetic import ArithmeticExpression
 from easymql.expressions.comparison import Cmp
@@ -11,6 +10,9 @@ from easymql.expressions.set import SetExpression
 from easymql.expressions.trigonometry import TrigonometryExpression
 from easymql.expressions.type import TypeExpression
 from easymql.proxies import expression_proxy
+from easymql.expressions.miscellaneous import MiscellaneousExpression
+from easymql.core import InfixExpression, OpAssoc, OneOf, Keyword
+from easymql.expressions.others import FieldPath
 
 
 class FuncExpression(Grammar):
@@ -27,6 +29,7 @@ class FuncExpression(Grammar):
         | TrigonometryExpression
         | TypeExpression
         | DataType
+        | FieldPath
     )
 
 
