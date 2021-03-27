@@ -4,7 +4,6 @@ from pytest import raises
 
 
 class TestComparisonExpression:
-
     def test_cmp(self):
         assert exp.parse('CMP(1, 2)') == {'$cmp': [1, 2]}
         with raises(ParseException):
