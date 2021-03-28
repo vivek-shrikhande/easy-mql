@@ -100,6 +100,7 @@ class FormatDate(Grammar):
     def action(tokens):
         print(tokens)
         doc = {'date': tokens[1]}
+        # Add 'format' to result only if it is not 'null'
         if len(tokens) >= 3 and not isinstance(tokens[2], Null):
             doc['format'] = tokens[2]
         if len(tokens) == 4:
