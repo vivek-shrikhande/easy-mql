@@ -111,9 +111,7 @@ class FormatDate(Grammar):
 class Extract(Grammar):
 
     date_part_map = {
-        'MILLISECOND': '$millisecond',
-        'SECOND': '$second',
-        'MINUTE': '$minute',
+        'MILLISECOND': '$millisecond','SECOND': '$second','MINUTE': '$minute',
         'HOUR': '$hour',
         'DAY_OF_WEEK': '$dayOfWeek',
         'ISO_DAY_OF_WEEK': '$isoDayOfWeek',
