@@ -4,6 +4,7 @@ from easymql.expressions.arithmetic import ArithmeticExpression
 from easymql.expressions.comparison import Cmp
 from easymql.expressions.conditional import ConditionalExpression
 from easymql.expressions.datasize import DataSizeExpression
+from easymql.expressions.date import DateExpression
 from easymql.expressions.miscellaneous import MiscellaneousExpression
 from easymql.expressions.object import MergeObjects, ObjectToArray
 from easymql.expressions.set import SetExpression
@@ -22,6 +23,7 @@ class FuncExpression(Grammar):
         | ConditionalExpression
         | Cmp
         | DataSizeExpression
+        | DateExpression
         | MiscellaneousExpression
         | MergeObjects
         | ObjectToArray
