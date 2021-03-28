@@ -5,7 +5,10 @@ name: Blacken
 # Othewrwise, Black is run and its changes are committed back to the incoming pull request.
 # https://github.com/cclauss/autoblack
 
-on: [pull_request]
+on:
+  pull_request:
+    types: [edited, opened, synchronize, reopened]
+
 jobs:
   build:
     runs-on: ubuntu-latest
