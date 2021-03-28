@@ -7,7 +7,7 @@ name: Blacken
 
 on:
   pull_request:
-    types: [edited, opened, synchronize, reopened]
+  push:
 
 jobs:
   build:
