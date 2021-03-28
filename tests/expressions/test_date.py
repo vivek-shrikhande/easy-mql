@@ -155,6 +155,7 @@ class TestDateExpression:
         assert self.exp.parse('PARSE_DATE("06-15-2018", "%m-%d-%Y")') == {
             '$dateFromString': {'dateString': '06-15-2018', 'format': '%m-%d-%Y'}
         }
+        # Result should not contain 'format' in it is 'null'
         assert self.exp.parse(
             'PARSE_DATE("2017-02-08T12:10:40.787", null, "America/New_York")'
         ) == {
