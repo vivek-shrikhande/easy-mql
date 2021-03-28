@@ -78,16 +78,13 @@ class ParseDate(Grammar):
     @staticmethod
     def action(tokens):
         print(tokens)
-        doc = {
-            'dateString': tokens[1]
-        }
+        doc = {'dateString': tokens[1]}
+        # Add 'format' to result only if it is not 'null'
         if len(tokens) >= 3 and not isinstance(tokens[2], Null):
             doc['format'] = tokens[2]
         if len(tokens) == 4:
             doc['timezone'] = tokens[3]
-        return {
-            '$dateFromString': doc
-        }
+        return {'$dateFromString': doc}
 
 
 class FormatDate(Grammar):
@@ -102,16 +99,12 @@ class FormatDate(Grammar):
     @staticmethod
     def action(tokens):
         print(tokens)
-        doc = {
-            'date': tokens[1]
-        }
+        doc = {'date': tokens[1]}
         if len(tokens) >= 3 and not isinstance(tokens[2], Null):
             doc['format'] = tokens[2]
         if len(tokens) == 4:
             doc['timezone'] = tokens[3]
-        return {
-            '$dateToString': doc
-        }
+        return {'$dateToString': doc}
 
 
 class Extract(Grammar):
@@ -143,7 +136,11 @@ class Extract(Grammar):
 
     @staticmethod
     def action(tokens):
-        return {Extract.date_part_map[tokens[1]]: dict(zip(('date', 'timezone'), tokens[2:]))}
+        return {
+            Extract.date_part_map[tokens[1]]: dict(
+                zip(('date', 'timezone'), tokens[2:])
+            )
+        }
 
 
 DateExpression = DateFunc | IsoWeekDateFunc | ParseDate | FormatDate | Extract
