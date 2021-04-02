@@ -73,6 +73,18 @@ class TestDelimitedList:
                 'c',
             ]
 
+    def test_min_1_max_ellipses(self):
+        dlist = delimited_list(Word(alphas), min=1)
+        with raises(ParseException):
+            assert dlist.parse('') == []
+        assert dlist.parse('a') == 'a'
+        assert dlist.parse('a, b') == ['a', 'b']
+        assert dlist.parse('a, b, c') == [
+            'a',
+            'b',
+            'c',
+        ]
+
     def test_min_2_max_2(self):
         dlist = delimited_list(Word(alphas), min=2, max=2)
         with raises(ParseException):
