@@ -8,10 +8,6 @@ class TestInfixExpression:
         assert exp.parse('NOT true') == {'$not': [True]}
         assert exp.parse('NOT (true)') == {'$not': [True]}
         assert exp.parse('NOT NOT true') == {'$not': [{'$not': [True]}]}
-        with raises(ParseException):
-            exp.parse('NOT1')
-        with raises(ParseException):
-            exp.parse('NOT')
 
     def test_multiply(self):
         assert exp.parse('1 * 3') == {'$multiply': [1, 3]}
