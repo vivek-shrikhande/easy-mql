@@ -4,10 +4,21 @@ from pytest import raises
 from easymql.datatypes.primary import (
     Integer,
 )
-from easymql.stages import Stages
+from easymql.stages import Stages, CollectionName
 
 
 class TestStages:
+    def test_collection_name(self):
+        # with whitespace but quotes surrounded
+        assert CollectionName.parse("'coll with whitespace'") == 'coll with whitespace'
+        # no whitespace, no quotes surrounded
+        assert (
+            CollectionName.parse("coll_without_whitespace") == 'coll_without_whitespace'
+        )
+        # whitespace with no quotes surrounded
+        with raises(ParseException):
+            CollectionName.parse('coll with whitespace')
+
     def test_add_fields(self):
         assert Stages.parse('ADD FIELDS "item" AS _id, "fruit" AS item;') == {
             '$addFields': {'_id': 'item', 'item': 'fruit'}
@@ -32,6 +43,24 @@ class TestStages:
             Stages.parse('LIMIT a;')
         with raises(ParseException):
             Stages.parse('LIMIT ;')
+
+    def test_lookup(self):
+        assert Stages.parse("LOOKUP inventory ON 'item' = 'sku';") == {
+            '$lookup': {
+                'from': 'inventory',
+                'localField': 'item',
+                'foreignField': 'sku',
+                'as': 'inventory_docs',
+            }
+        }
+        assert Stages.parse("LOOKUP inventory ON 'item' = 'sku' AS 'inventories';") == {
+            '$lookup': {
+                'from': 'inventory',
+                'localField': 'item',
+                'foreignField': 'sku',
+                'as': 'inventories',
+            }
+        }
 
     def test_match(self):
         assert Stages.parse('MATCH \'author\' = "dave";') == {

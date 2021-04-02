@@ -2,12 +2,17 @@ from pyparsing import alphanums
 
 from easymql import Grammar
 from easymql.basics import SEMICOLON
-from easymql.core import Keyword, Word, Suppress
+from easymql.core import Keyword, Word, Suppress, Literal, Optional, Regex
 from easymql.core import QuotedString
 from easymql.datatypes.primary import Number
 from easymql.expressions import Expression
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
+
+
+class CollectionName(Grammar):
+
+    grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'\S+')
 
 
 class Field(Grammar):
@@ -67,6 +72,31 @@ class Limit(Grammar):
     @classmethod
     def action(cls, tokens):
         return {"$limit": tokens[0]}
+
+
+class Lookup(Grammar):
+
+    grammar = (
+        Keyword("LOOKUP")
+        + CollectionName
+        + Keyword("ON")
+        + Field
+        + Literal('=')
+        + Field
+        + Optional(Keyword("AS") + Field)
+        + SEMICOLON
+    )
+
+    @classmethod
+    def action(cls, tokens):
+        return {
+            '$lookup': {
+                'from': tokens[1],
+                'localField': tokens[3],
+                'foreignField': tokens[5],
+                'as': tokens[-1] if len(tokens) == 8 else f'{tokens[1]}_docs',
+            }
+        }
 
 
 class Match(Grammar):
@@ -157,5 +187,14 @@ class SortByCount(Grammar):
 class Stages(Grammar):
 
     grammar = (
-        AddFields | Count | Limit | Match | Sample | Set | Skip | Sort | SortByCount
+        AddFields
+        | Count
+        | Limit
+        | Lookup
+        | Match
+        | Sample
+        | Set
+        | Skip
+        | Sort
+        | SortByCount
     )
