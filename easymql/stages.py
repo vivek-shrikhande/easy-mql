@@ -17,7 +17,7 @@ class CollectionName(Grammar):
 
 class Field(Grammar):
 
-    grammar = QuotedString(quoteChar="'", escChar='\\', multiline=True)
+    grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'\S+')
 
     @classmethod
     def action(cls, token):
