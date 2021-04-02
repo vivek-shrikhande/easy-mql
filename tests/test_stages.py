@@ -4,7 +4,7 @@ from pytest import raises
 from easymql.datatypes.primary import (
     Integer,
 )
-from easymql.stages import Stages, CollectionName
+from easymql.stages import Stages, CollectionName, Field
 
 
 class TestStages:
@@ -22,11 +22,29 @@ class TestStages:
         with raises(ParseException):
             CollectionName.parse(
                 """'coll
-            with
-            multiline'"""
+                with
+                multiline'"""
             )
         # newline
         assert CollectionName.parse(r'coll_with\n') == r'coll_with\n'
+
+    def test_field(self):
+        # with whitespace but quotes surrounded
+        assert Field.parse("'field with whitespace'") == 'field with whitespace'
+        # no whitespace, no quotes surrounded
+        assert Field.parse("field_without_whitespace") == 'field_without_whitespace'
+        # whitespace with no quotes surrounded
+        with raises(ParseException):
+            Field.parse('field with whitespace')
+        # multiline
+        with raises(ParseException):
+            Field.parse(
+                """'field
+                with
+                multiline'"""
+            )
+        # newline
+        assert Field.parse(r'field_with\n') == r'field_with\n'
 
     def test_add_fields(self):
         assert Stages.parse('ADD FIELDS "item" AS _id, "fruit" AS item;') == {
