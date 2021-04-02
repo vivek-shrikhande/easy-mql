@@ -12,7 +12,9 @@ class TestOthers:
         assert FieldPath.parse('\'hello "world"\'') == '$hello "world"'
         assert FieldPath.parse("'unicode \u1F600 test'") == "$unicode \u1F600 test"
         with raises(ParseException):
-            FieldPath.parse("""'multi
-            line'""")
+            FieldPath.parse(
+                """'multi
+            line'"""
+            )
         with raises(ParseException):
             assert FieldPath.parse('"hello"') == "$hello"
