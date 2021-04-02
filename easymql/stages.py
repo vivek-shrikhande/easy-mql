@@ -12,16 +12,12 @@ from easymql.utils import delimited_list
 
 class CollectionName(Grammar):
 
-    grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'\S+')
+    grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'[\w.]+')
 
 
 class Field(Grammar):
 
-    grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'\S+')
-
-    @classmethod
-    def action(cls, token):
-        return token[0]
+    grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'[\w.]+')
 
 
 class Pair(Grammar):

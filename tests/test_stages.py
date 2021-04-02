@@ -25,8 +25,11 @@ class TestStages:
                 with
                 multiline'"""
             )
-        # newline
-        assert CollectionName.parse(r'coll_with\n') == r'coll_with\n'
+        # newline but no quotes surrounding
+        with raises(ParseException):
+            CollectionName.parse('coll_with\nnewline')
+        # newline with quotes surrounding
+        assert CollectionName.parse("'coll_with\\nnewline'") == 'coll_with\nnewline'
 
     def test_field(self):
         # with whitespace but quotes surrounded
@@ -43,8 +46,11 @@ class TestStages:
                 with
                 multiline'"""
             )
-        # newline
-        assert Field.parse(r'field_with\n') == r'field_with\n'
+        # newline but no quotes surrounding
+        with raises(ParseException):
+            Field.parse('field_with\nnewline')
+        # newline with quotes surrounding
+        assert CollectionName.parse("'field_with\\nnewline'") == 'field_with\nnewline'
 
     def test_add_fields(self):
         assert Stages.parse('ADD FIELDS "item" AS _id, "fruit" AS item;') == {
