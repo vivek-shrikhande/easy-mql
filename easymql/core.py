@@ -131,5 +131,5 @@ class InfixExpression(Adapter):
 
 class MatchFirst(Adapter):
     def __init__(self, exprs, savelist=False):
-        grammar = PpMatchFirst([expr._grammar for expr in exprs], savelist=False)
+        grammar = PpMatchFirst([expr._grammar for expr in exprs], savelist)
         super(MatchFirst, self).__init__(grammar)
