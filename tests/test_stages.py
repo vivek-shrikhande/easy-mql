@@ -8,12 +8,13 @@ from easymql.stages import Stages, CollectionName
 
 
 class TestStages:
-
     def test_collection_name(self):
         # with whitespace but quotes surrounded
         assert CollectionName.parse("'coll with whitespace'") == 'coll with whitespace'
         # no whitespace, no quotes surrounded
-        assert CollectionName.parse("coll_without_whitespace") == 'coll_without_whitespace'
+        assert (
+            CollectionName.parse("coll_without_whitespace") == 'coll_without_whitespace'
+        )
         # whitespace with no quotes surrounded
         with raises(ParseException):
             CollectionName.parse('coll with whitespace')
