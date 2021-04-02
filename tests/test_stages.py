@@ -18,6 +18,13 @@ class TestStages:
         # whitespace with no quotes surrounded
         with raises(ParseException):
             CollectionName.parse('coll with whitespace')
+        # multiline
+        with raises(ParseException):
+            CollectionName.parse("""'coll
+            with
+            multiline'""")
+        # newline
+        assert CollectionName.parse(r'coll_with\n') == r'coll_with\n'
 
     def test_add_fields(self):
         assert Stages.parse('ADD FIELDS "item" AS _id, "fruit" AS item;') == {
