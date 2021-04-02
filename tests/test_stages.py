@@ -20,9 +20,11 @@ class TestStages:
             CollectionName.parse('coll with whitespace')
         # multiline
         with raises(ParseException):
-            CollectionName.parse("""'coll
+            CollectionName.parse(
+                """'coll
             with
-            multiline'""")
+            multiline'"""
+            )
         # newline
         assert CollectionName.parse(r'coll_with\n') == r'coll_with\n'
 
