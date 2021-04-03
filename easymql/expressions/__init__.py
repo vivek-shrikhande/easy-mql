@@ -1,25 +1,26 @@
 from easymql import Grammar
+from easymql.core import InfixExpression, OpAssoc, OneOf, Keyword
 from easymql.datatypes import DataType
 from easymql.expressions.arithmetic import ArithmeticExpression
+from easymql.expressions.array import ArrayExpression
 from easymql.expressions.comparison import Cmp
 from easymql.expressions.conditional import ConditionalExpression
 from easymql.expressions.datasize import DataSizeExpression
 from easymql.expressions.date import DateExpression
 from easymql.expressions.miscellaneous import MiscellaneousExpression
 from easymql.expressions.object import MergeObjects, ObjectToArray
+from easymql.expressions.others import FieldPath
 from easymql.expressions.set import SetExpression
 from easymql.expressions.trigonometry import TrigonometryExpression
 from easymql.expressions.type import TypeExpression
 from easymql.proxies import expression_proxy
-from easymql.expressions.miscellaneous import MiscellaneousExpression
-from easymql.core import InfixExpression, OpAssoc, OneOf, Keyword
-from easymql.expressions.others import FieldPath
 
 
 class FuncExpression(Grammar):
 
     grammar = (
         ArithmeticExpression
+        | ArrayExpression
         | ConditionalExpression
         | Cmp
         | DataSizeExpression
