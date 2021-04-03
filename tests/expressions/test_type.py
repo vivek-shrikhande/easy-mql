@@ -9,6 +9,27 @@ class TestTypeExpression:
     def setup_class(cls):
         cls.exp = Expression
 
+    def test_convert(self):
+        with raises(ParseException):
+            self.exp.parse('CONVERT()')
+        assert self.exp.parse('CONVERT(4.99, "decimal")') == {
+            '$convert': {'input': 4.99, 'to': "decimal"}
+        }
+        assert self.exp.parse('CONVERT(4.99, "decimal", "Error")') == {
+            '$convert': {'input': 4.99, 'to': "decimal", 'onError': 'Error'}
+        }
+        assert self.exp.parse('CONVERT(4.99, "decimal", "Error", 0)') == {
+            '$convert': {
+                'input': 4.99,
+                'to': "decimal",
+                'onError': 'Error',
+                'onNull': 0,
+            }
+        }
+        # extra args
+        with raises(ParseException):
+            self.exp.parse('CONVERT(4.99, "decimal", "Error", 0, 0)')
+
     def test_is_number(self):
         assert self.exp.parse('IS_NUMBER("grade")') == {'$isNumber': ["grade"]}
         with raises(ParseException):
