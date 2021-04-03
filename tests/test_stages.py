@@ -124,6 +124,38 @@ class TestStages:
         with raises(ParseException):
             Stages.parse('OUTPUT TO COLL ;')
 
+    def test_project(self):
+        # no projections
+        with raises(ParseException):
+            Stages.parse("PROJECT ;")
+        # one projection
+        assert Stages.parse("PROJECT title;") == {'$project': {'title': 1}}
+        # multiple projection
+        assert Stages.parse("PROJECT title, author;") == {
+            '$project': {'title': 1, 'author': 1}
+        }
+        # embedded projection
+        assert Stages.parse("PROJECT author.first;") == {
+            '$project': {'author.first': 1}
+        }
+        # exclusion
+        assert Stages.parse("PROJECT - title;") == {'$project': {'title': 0}}
+        assert Stages.parse("PROJECT - '-title';") == {'$project': {'-title': 0}}
+        # inclusion
+        assert Stages.parse("PROJECT + title;") == {'$project': {'title': 1}}
+        assert Stages.parse("PROJECT + '-title';") == {'$project': {'-title': 1}}
+        # add new field
+        assert Stages.parse("PROJECT author.first AS first_name;") == {
+            '$project': {'first_name': '$author.first'}
+        }
+        # all combined
+        assert Stages.parse(
+            "PROJECT +title, -publisher, author.first AS first_name;"
+        ) == {'$project': {'title': 1, 'publisher': 0, 'first_name': '$author.first'}}
+        # others
+        with raises(ParseException):
+            Stages.parse("PROJECT +-title;")
+
     def test_redact(self):
         assert Stages.parse('REDACT IF (true, "it\'s true", "it\'s false");') == {
             '$redact': {

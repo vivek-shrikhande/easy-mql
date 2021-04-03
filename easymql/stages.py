@@ -7,8 +7,8 @@ from easymql.core import Optional
 from easymql.core import QuotedString
 from easymql.datatypes.primary import Number
 from easymql.expressions import Expression
-from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
+from functools import reduce
 
 
 class CollectionName(Grammar):
@@ -120,6 +120,33 @@ class OutputToDb(Grammar):
         if len(tokens) == 1:
             return {"$out": tokens[0]}
         return {"$out": {"db": tokens[0], "coll": tokens[1]}}
+
+
+class Project(Grammar):
+    class NewField(Grammar):
+        grammar = Expression + Keyword('AS') + Field
+
+        @classmethod
+        def action(cls, tokens):
+            return {tokens[-1]: tokens[0]}
+
+    class ExcludeOrInclude(Grammar):
+        grammar = Literal('+') + Field | Literal('-') + Field | Field
+
+        @classmethod
+        def action(cls, tokens):
+            if len(tokens) == 1:
+                return {tokens[0]: 1}
+            else:
+                return {tokens[-1]: 1 if tokens[0] == '+' else 0}
+
+    # order matters
+    element = NewField | ExcludeOrInclude
+    grammar = Suppress(Keyword("PROJECT")) + delimited_list(element, min=1) + SEMICOLON
+
+    @classmethod
+    def action(cls, tokens):
+        return {'$project': reduce(lambda x, y: {**x, **y}, tokens)}
 
 
 class Redact(Grammar):
@@ -253,6 +280,7 @@ class Stages(Grammar):
         | Limit
         | Lookup
         | Match
+        | Project
         | OutputToDb
         | Redact
         | ReplaceRoot
