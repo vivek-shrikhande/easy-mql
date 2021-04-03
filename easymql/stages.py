@@ -1,12 +1,13 @@
-from pyparsing import alphanums
+from pyparsing import alphanums, ParseException
 
 from easymql import Grammar
 from easymql.basics import SEMICOLON
 from easymql.core import Keyword, Word, Suppress, Literal, Regex
 from easymql.core import Optional
 from easymql.core import QuotedString
-from easymql.datatypes.primary import Number
+from easymql.datatypes.primary import Number, Boolean
 from easymql.expressions import Expression
+from easymql.expressions.others import FieldPath
 from easymql.utils import delimited_list
 from functools import reduce
 
@@ -272,6 +273,46 @@ class Unset(Grammar):
         return {"$unset": token}
 
 
+class Unwind(Grammar):
+    class ArrayIndex(Grammar):
+        grammar = Keyword("ARRAY") + Keyword("INDEX") + Keyword("AS") + Field
+
+        @classmethod
+        def action(cls, tokens):
+            return 'includeArrayIndex', tokens[-1]
+
+    class PreserverNullEmptyArrays(Grammar):
+        grammar = (
+            Keyword("PRESERVE")
+            + Keyword("NULL")
+            + Keyword("EMPTY")
+            + Keyword("ARRAYS")
+            + Boolean
+        )
+
+        @classmethod
+        def action(cls, tokens):
+            return 'preserveNullAndEmptyArrays', tokens[-1]
+
+    grammar = (
+        Keyword("UNWIND")
+        + FieldPath
+        + (ArrayIndex | PreserverNullEmptyArrays)[0, 2]
+        + SEMICOLON
+    )
+
+    @classmethod
+    def action(cls, s, loc, tokens):
+        # raise error if 2 options are given but both are the same
+        if len(tokens) == 4 and tokens[2][0] == tokens[3][0]:
+            if tokens[2][0] == 'includeArrayIndex':
+                option = 'ARRAY INDEX AS'
+            else:
+                option = 'PRESERVE NULL EMPTY ARRAYS'
+            raise ParseException('', loc=loc, msg=f"Duplicate option '{option}'")
+        return {'$unwind': dict([('path', tokens[1])] + tokens[2:])}
+
+
 class Stages(Grammar):
 
     grammar = (
@@ -291,4 +332,5 @@ class Stages(Grammar):
         | Sort
         | SortByCount
         | Unset
+        | Unwind
     )
