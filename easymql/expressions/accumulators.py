@@ -78,6 +78,4 @@ class Sum(Grammar, ExpressionAction):
 
 class AccumulatorExpression(Grammar):
 
-    grammar = (
-        AddToSet | Avg | Max | Min | Push | StdDevPop | StdDevSamp | Sum
-    )
+    grammar = AddToSet | Avg | Max | Min | Push | StdDevPop | StdDevSamp | Sum
