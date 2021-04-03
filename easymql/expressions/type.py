@@ -4,6 +4,21 @@ from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.proxies import expression_proxy
+from easymql.utils import delimited_list
+
+
+class Convert(Grammar):
+
+    grammar = (
+        Keyword('CONVERT')
+        + LPAREN
+        + delimited_list(expression_proxy, min=2, max=4)
+        + RPAREN
+    )
+
+    @classmethod
+    def action(cls, tokens):
+        return {'$convert': dict(zip(('input', 'to', 'onError', 'onNull'), tokens[1:]))}
 
 
 class IsNumber(Grammar, ExpressionAction):
@@ -59,7 +74,8 @@ class Type(Grammar, ExpressionAction):
 class TypeExpression(Grammar):
 
     grammar = (
-        IsNumber
+        Convert
+        | IsNumber
         | ToBool
         | ToDate
         | ToDecimal
