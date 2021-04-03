@@ -248,3 +248,49 @@ class TestStages:
         }
         with raises(ParseException):
             Stages.parse('UNSET ;')
+
+    def test_unwind(self):
+        # no field path
+        with raises(ParseException):
+            Stages.parse("UNWIND ;")
+        # with field path
+        assert Stages.parse("UNWIND sizes;") == {'$unwind': {'path': '$sizes'}}
+        # with ARRAY INDEX AS option
+        assert Stages.parse("UNWIND sizes ARRAY INDEX AS arrayIndex;") == {
+            '$unwind': {'path': '$sizes', 'includeArrayIndex': 'arrayIndex'}
+        }
+        # with PRESERVE NULL EMPTY ARRAYS option
+        assert Stages.parse("UNWIND sizes PRESERVE NULL EMPTY ARRAYS true;") == {
+            '$unwind': {'path': '$sizes', 'preserveNullAndEmptyArrays': True}
+        }
+        # both the options
+        assert Stages.parse(
+            "UNWIND sizes ARRAY INDEX AS arrayIndex PRESERVE NULL EMPTY ARRAYS true;"
+        ) == {
+            '$unwind': {
+                'path': '$sizes',
+                'includeArrayIndex': 'arrayIndex',
+                'preserveNullAndEmptyArrays': True,
+            }
+        }
+        assert Stages.parse(
+            "UNWIND sizes PRESERVE NULL EMPTY ARRAYS true ARRAY INDEX AS arrayIndex;"
+        ) == {
+            '$unwind': {
+                'path': '$sizes',
+                'includeArrayIndex': 'arrayIndex',
+                'preserveNullAndEmptyArrays': True,
+            }
+        }
+        # same option twice
+        with raises(ParseException):
+            assert Stages.parse(
+                "UNWIND sizes ARRAY INDEX AS arrayIndex ARRAY INDEX AS arrayIndex;"
+            )
+        with raises(ParseException):
+            assert Stages.parse(
+                "UNWIND sizes PRESERVE NULL EMPTY ARRAYS true PRESERVE NULL EMPTY ARRAYS true;"
+            )
+        # missing option value
+        with raises(ParseException):
+            Stages.parse("UNWIND sizes ARRAY INDEX AS PRESERVE NULL EMPTY ARRAYS true;")
