@@ -2,7 +2,8 @@ from pyparsing import alphanums
 
 from easymql import Grammar
 from easymql.basics import SEMICOLON
-from easymql.core import Keyword, Word, Suppress, Literal, Optional, Regex
+from easymql.core import Keyword, Word, Suppress, Literal, Regex
+from easymql.core import Optional
 from easymql.core import QuotedString
 from easymql.datatypes.primary import Number
 from easymql.expressions import Expression
@@ -20,27 +21,21 @@ class Field(Grammar):
     grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'[\w.]+')
 
 
-class Pair(Grammar):
-    grammar = Expression + Suppress(Keyword("AS")) + Word(alphanums + '_')
+class Alias(Grammar):
+
+    grammar = Expression + Suppress(Keyword("AS")) + Field
 
     @classmethod
     def action(cls, tokens):
         return {tokens[1]: tokens[0]}
 
 
-class PairBy(Grammar):
-    grammar = expression_proxy + Suppress(Keyword("BY")) + Number
-
-    @classmethod
-    def action(cls, tokens):
-        return {tokens[0]: tokens[1]}
-
-
 class AddFields(Grammar):
+
     grammar = (
         Suppress(Keyword("ADD"))
         + Suppress(Keyword("FIELDS"))
-        + delimited_list(Pair, min=1)
+        + delimited_list(Alias, min=1)
         + SEMICOLON
     )
 
@@ -54,11 +49,16 @@ class AddFields(Grammar):
 
 class Count(Grammar):
 
-    grammar = Keyword("COUNT") + Keyword("AS") + Word(alphanums + '_') + SEMICOLON
+    grammar = (
+        Suppress(Keyword("COUNT"))
+        + Suppress(Keyword("AS"))
+        + CollectionName
+        + SEMICOLON
+    )
 
     @classmethod
     def action(cls, tokens):
-        return {"$count": tokens[2]}
+        return {"$count": tokens[0]}
 
 
 class Limit(Grammar):
@@ -104,6 +104,59 @@ class Match(Grammar):
         return {"$match": {"$expr": tokens[0]}}
 
 
+class OutputToDb(Grammar):
+
+    grammar = (
+        Suppress(Keyword("OUTPUT"))
+        + Suppress(Keyword("TO"))
+        + Optional(Suppress(Keyword("DB")) + Word(alphanums + '_'))
+        + Suppress(Keyword("COLL"))
+        + CollectionName
+        + SEMICOLON
+    )
+
+    @classmethod
+    def action(cls, tokens):
+        if len(tokens) == 1:
+            return {"$out": tokens[0]}
+        return {"$out": {"db": tokens[0], "coll": tokens[1]}}
+
+
+class Redact(Grammar):
+
+    grammar = Suppress(Keyword("REDACT")) + Expression + SEMICOLON
+
+    @classmethod
+    def action(cls, tokens):
+        return {"$redact": tokens[0]}
+
+
+class ReplaceRoot(Grammar):
+    grammar = (
+        Suppress(Keyword("REPLACE"))
+        + Suppress(Keyword("ROOT"))
+        + Expression
+        + SEMICOLON
+    )
+
+    @classmethod
+    def action(cls, tokens):
+        return {"$replaceRoot": {"newRoot": tokens[0]}}
+
+
+class ReplaceWith(Grammar):
+    grammar = (
+        Suppress(Keyword("REPLACE"))
+        + Suppress(Keyword("WITH"))
+        + Expression
+        + SEMICOLON
+    )
+
+    @classmethod
+    def action(cls, tokens):
+        return {"$replaceWith": tokens[0]}
+
+
 class Sample(Grammar):
 
     grammar = Suppress(Keyword("SAMPLE")) + Number + SEMICOLON
@@ -115,7 +168,7 @@ class Sample(Grammar):
 
 class Set(Grammar):
 
-    grammar = Suppress(Keyword("SET")) + delimited_list(Pair, min=1) + SEMICOLON
+    grammar = Suppress(Keyword("SET")) + delimited_list(Alias, min=1) + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -180,6 +233,18 @@ class SortByCount(Grammar):
         return {"$sortByCount": tokens[0]}
 
 
+class Unset(Grammar):
+
+    grammar = Suppress(Keyword("UNSET")) + delimited_list(Field, min=1) + SEMICOLON
+
+    @classmethod
+    def action(cls, tokens):
+        token = []
+        for i in tokens:
+            token.append(i)
+        return {"$unset": token}
+
+
 class Stages(Grammar):
 
     grammar = (
@@ -188,9 +253,14 @@ class Stages(Grammar):
         | Limit
         | Lookup
         | Match
+        | OutputToDb
+        | Redact
+        | ReplaceRoot
+        | ReplaceWith
         | Sample
         | Set
         | Skip
         | Sort
         | SortByCount
+        | Unset
     )
