@@ -1,9 +1,7 @@
 from pyparsing import ParseException
 from pytest import raises
 
-from easymql.datatypes.primary import (
-    Integer,
-)
+from easymql.datatypes.primary import Integer, Boolean, Decimal, String, Null
 from easymql.stages import Stages, CollectionName, Field
 
 
@@ -63,15 +61,17 @@ class TestStages:
             '$addFields': {'totalScore': {"$add": [1, 3]}}
         }
         with raises(ParseException):
-            Stages.parse('ADD FIELDS ;')  # Ask
+            Stages.parse('ADD FIELDS ;')
 
     def test_count(self):
-        assert Stages.parse('COUNT AS passing_Score;') == {'$count': 'passing_Score'}
+        assert Stages.parse("COUNT AS passing_Score;") == {'$count': 'passing_Score'}
+        assert Stages.parse("COUNT AS 'passing_Score';") == {'$count': 'passing_Score'}
         with raises(ParseException):
             Stages.parse('COUNT AS ;')
 
     def test_limit(self):
         assert Stages.parse('LIMIT 50;') == {'$limit': Integer(50)}
+        assert Stages.parse('LIMIT 5.0;') == {'$limit': Decimal(5.0)}
         with raises(ParseException):
             Stages.parse('LIMIT a;')
         with raises(ParseException):
@@ -112,6 +112,71 @@ class TestStages:
         with raises(ParseException):
             Stages.parse('MATCH ;')
 
+    def test_output_to_db(self):
+        assert Stages.parse("OUTPUT TO COLL author;") == {'$out': 'author'}
+        assert Stages.parse("OUTPUT TO COLL 'author';") == {'$out': 'author'}
+        assert Stages.parse('OUTPUT TO COLL _author;') == {'$out': '_author'}
+        assert Stages.parse("OUTPUT TO DB reporting COLL 'author';") == {
+            '$out': {'db': 'reporting', 'coll': 'author'}
+        }
+        with raises(ParseException):
+            Stages.parse('OUTPUT TO DB ;')
+        with raises(ParseException):
+            Stages.parse('OUTPUT TO COLL ;')
+
+    def test_redact(self):
+        assert Stages.parse('REDACT IF (true, "it\'s true", "it\'s false");') == {
+            '$redact': {
+                '$cond': {
+                    'if': Boolean(True),
+                    'then': String("it's true"),
+                    'else': String("it's false"),
+                }
+            }
+        }
+        assert Stages.parse('REDACT IF_NULL(null, 0);') == {
+            '$redact': {'$ifNull': [Null(None), Integer(0)]}
+        }
+        with raises(ParseException):
+            Stages.parse('REDACT ;')
+
+    def test_replace_root(self):
+        assert Stages.parse(
+            'REPLACE ROOT MERGE_OBJECTS({"_id": "$_id", "first":"", "last":""}, "$name");'
+        ) == {
+            '$replaceRoot': {
+                'newRoot': {
+                    '$mergeObjects': [
+                        {
+                            '_id': String('$_id'),
+                            'first': String(''),
+                            'last': String(''),
+                        },
+                        String('$name'),
+                    ]
+                }
+            }
+        }
+        assert Stages.parse('REPLACE ROOT name;') == {
+            "$replaceRoot": {"newRoot": "$name"}
+        }
+        assert Stages.parse('REPLACE ROOT last_name;') == {
+            "$replaceRoot": {"newRoot": "$last_name"}
+        }
+        with raises(ParseException):
+            Stages.parse('REPLACE ROOT ;')
+
+    def test_replace_with(self):
+        assert Stages.parse('REPLACE WITH MERGE_OBJECTS({"a": 1}, null);') == {
+            '$replaceWith': {'$mergeObjects': [{'a': Integer(1)}, Null(None)]}
+        }
+        assert Stages.parse('REPLACE WITH name;') == {'$replaceWith': '$name'}
+        assert Stages.parse('REPLACE WITH document_name;') == {
+            '$replaceWith': '$document_name'
+        }
+        with raises(ParseException):
+            Stages.parse('REPLACE WITH ;')
+
     def test_sample(self):
         assert Stages.parse('SAMPLE 23;') == {'$sample': Integer(23)}
         with raises(ParseException):
@@ -142,3 +207,12 @@ class TestStages:
         assert Stages.parse("SORT BY COUNT 'size';") == {'$sortByCount': '$size'}
         with raises(ParseException):
             Stages.parse('SORT BY COUNT;')
+
+    def test_unset(self):
+        assert Stages.parse("UNSET 'isbn';") == {'$unset': ['isbn']}
+        assert Stages.parse("UNSET 'isbn', 'copies';") == {'$unset': ['isbn', 'copies']}
+        assert Stages.parse("UNSET 'isbn', 'copies', 'num';") == {
+            '$unset': ['isbn', 'copies', 'num']
+        }
+        with raises(ParseException):
+            Stages.parse('UNSET ;')
