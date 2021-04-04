@@ -2,7 +2,8 @@ from pyparsing import ParseException
 from pytest import raises
 
 from easymql.datatypes.primary import Integer, Boolean, Decimal, String, Null
-from easymql.stages import Stages, CollectionName, Field, DbName, DbCollectionPath
+from easymql.stages import Stages
+from easymql.stages.parts import CollectionName, Field, DbName, DbCollectionPath
 
 
 class TestStages:

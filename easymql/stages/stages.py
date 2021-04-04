@@ -4,47 +4,12 @@ from pyparsing import ParseException
 
 from easymql import Grammar
 from easymql.basics import SEMICOLON, RPAREN, LPAREN
-from easymql.core import Keyword, Suppress, Literal, Regex, Optional, QuotedString
+from easymql.core import Keyword, Suppress, Literal, Optional
 from easymql.datatypes.primary import Number, Boolean
 from easymql.expressions import Expression
 from easymql.expressions.others import FieldPath
+from easymql.stages.parts import CollectionName, DbCollectionPath, Field, Alias
 from easymql.utils import delimited_list, keyword_group
-
-
-class CollectionName(Grammar):
-
-    grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'[\w.]+')
-
-
-class DbName(Grammar):
-
-    grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'\w+')
-
-
-class Field(Grammar):
-
-    grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'[\w.]+')
-
-
-class DbCollectionPath(Grammar):
-
-    grammar = Optional(Keyword('DB') + DbName) + Keyword("COLL") + CollectionName
-
-    @classmethod
-    def action(cls, tokens):
-        if len(tokens) == 2:
-            return tokens[-1]
-        else:
-            return {'db': tokens[1], 'coll': tokens[-1]}
-
-
-class Alias(Grammar):
-
-    grammar = Expression + Suppress(Keyword("AS")) + Field
-
-    @classmethod
-    def action(cls, tokens):
-        return {tokens[1]: tokens[0]}
 
 
 class AddFields(Grammar):
@@ -229,19 +194,17 @@ class Skip(Grammar):
         return {"$skip": tokens[0]}
 
 
-class PairBySort(Grammar):
-    grammar = Field + (Keyword('ASC') | Keyword('DESC'))
-
-    @classmethod
-    def action(cls, tokens):
-        if tokens[1] == "ASC":
-            tokens[1] = 1
-        elif tokens[1] == 'DESC':
-            tokens[1] = -1
-        return {tokens[0]: tokens[1]}
-
-
 class Sort(Grammar):
+    class PairBySort(Grammar):
+        grammar = Field + (Keyword('ASC') | Keyword('DESC'))
+
+        @classmethod
+        def action(cls, tokens):
+            if tokens[1] == "ASC":
+                tokens[1] = 1
+            elif tokens[1] == 'DESC':
+                tokens[1] = -1
+            return {tokens[0]: tokens[1]}
 
     grammar = (
         (Suppress(Keyword("SORT")) | Suppress(Keyword("ORDER")))
@@ -314,7 +277,7 @@ class Unwind(Grammar):
     )
 
     @classmethod
-    def action(cls, s, loc, tokens):
+    def action(cls, loc, tokens):
         # raise error if 2 options are given but both are the same
         if len(tokens) == 4 and tokens[2][0] == tokens[3][0]:
             if tokens[2][0] == 'includeArrayIndex':
@@ -383,25 +346,23 @@ class Merge(Grammar):
         }
 
 
-class Stages(Grammar):
-
-    grammar = (
-        AddFields
-        | Count
-        | Limit
-        | Lookup
-        | Match
-        | Merge
-        | Project
-        | OutputToDb
-        | Redact
-        | ReplaceRoot
-        | ReplaceWith
-        | Sample
-        | Set
-        | Skip
-        | Sort
-        | SortByCount
-        | Unset
-        | Unwind
-    )
+Stages = (
+    AddFields
+    | Count
+    | Limit
+    | Lookup
+    | Match
+    | Merge
+    | Project
+    | OutputToDb
+    | Redact
+    | ReplaceRoot
+    | ReplaceWith
+    | Sample
+    | Set
+    | Skip
+    | Sort
+    | SortByCount
+    | Unset
+    | Unwind
+)
