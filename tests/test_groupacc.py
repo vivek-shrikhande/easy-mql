@@ -1,7 +1,7 @@
 from pyparsing import ParseException
 from pytest import raises
 
-from easymql.groupacc import GroupByAccumulatorExpression
+from easymql.stages.groupacc import GroupByAccumulatorExpression
 
 
 class TestGroupByAccumulatorsExpression:
