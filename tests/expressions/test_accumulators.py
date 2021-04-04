@@ -9,11 +9,6 @@ class TestAccumulatorsExpression:
     def setup_class(cls):
         cls.exp = Expression
 
-    def test_add_to_set(self):
-        assert self.exp.parse('ADD_TO_SET("price")') == {"$addToSet": ["price"]}
-        with raises(ParseException):
-            self.exp.parse("ADD_TO_SET()")
-
     def test_avg(self):
         assert self.exp.parse('AVG("price", "quantity")') == {
             "$avg": ["price", "quantity"]
@@ -35,11 +30,6 @@ class TestAccumulatorsExpression:
         }
         with raises(ParseException):
             self.exp.parse("AVG()")
-
-    def test_push(self):
-        assert self.exp.parse('PUSH("price")') == {"$push": ["price"]}
-        with raises(ParseException):
-            self.exp.parse("PUSH()")
 
     def test_std_pev_pop(self):
         assert self.exp.parse('STD_DEV_POP("price", "quantity")') == {
