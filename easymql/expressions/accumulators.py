@@ -6,11 +6,6 @@ from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 
 
-class AddToSet(Grammar, ExpressionAction):
-
-    grammar = Keyword("ADD_TO_SET") + LPAREN + expression_proxy + RPAREN
-
-
 class Avg(Grammar, ExpressionAction):
 
     grammar = (
@@ -39,11 +34,6 @@ class Min(Grammar, ExpressionAction):
         + delimited_list(expression_proxy, min=1, max=...)
         + RPAREN
     )
-
-
-class Push(Grammar, ExpressionAction):
-
-    grammar = Keyword("PUSH") + LPAREN + expression_proxy + RPAREN
 
 
 class StdDevPop(Grammar, ExpressionAction):
@@ -78,4 +68,4 @@ class Sum(Grammar, ExpressionAction):
 
 class AccumulatorExpression(Grammar):
 
-    grammar = AddToSet | Avg | Max | Min | Push | StdDevPop | StdDevSamp | Sum
+    grammar = Avg | Max | Min | StdDevPop | StdDevSamp | Sum
