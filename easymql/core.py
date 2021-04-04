@@ -13,6 +13,7 @@ from pyparsing import (
     infixNotation as PpInfixNotation,
     opAssoc as OpAssoc,  # noqa
     MatchFirst as PpMatchFirst,
+    And as PpAnd,
 )
 
 from easymql import Adapter
@@ -133,3 +134,9 @@ class MatchFirst(Adapter):
     def __init__(self, exprs, savelist=False):
         grammar = PpMatchFirst([expr._grammar for expr in exprs], savelist)
         super(MatchFirst, self).__init__(grammar)
+
+
+class And(Adapter):
+    def __init__(self, exprs, savelist=True):
+        grammar = PpAnd([expr._grammar for expr in exprs], savelist)
+        super(And, self).__init__(grammar)

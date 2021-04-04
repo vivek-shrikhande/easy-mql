@@ -2,7 +2,7 @@ from easymql.core import Word
 from pyparsing import ParseException, alphas
 from pytest import raises
 
-from easymql.utils import delimited_list
+from easymql.utils import delimited_list, keyword_group
 
 
 class TestDelimitedList:
@@ -111,3 +111,21 @@ class TestDelimitedList:
             assert dlist.parse('a') == 'a'
         assert dlist.parse('a, b') == ['a', 'b']
         assert dlist.parse('a, b, c') == ['a', 'b', 'c']
+
+
+# class TestKeywordGroup:
+def test_keyword_group():
+    assert keyword_group('AS').parse('AS') == 'AS'
+    with raises(ParseException):
+        keyword_group('ASON').parse('AS ON')
+    assert keyword_group('AS ON').parse('AS ON') == ['AS', 'ON']
+    assert keyword_group('AS     ON').parse('AS ON') == ['AS', 'ON']
+    assert keyword_group('AS ON').parse('AS     ON') == ['AS', 'ON']
+    assert keyword_group('AS ON').parse('AS     ON') == ['AS', 'ON']
+    assert (
+        keyword_group(
+            '''AS
+    ON'''
+        ).parse('AS     ON')
+        == ['AS', 'ON']
+    )

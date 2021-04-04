@@ -324,3 +324,165 @@ class TestStages:
         # missing option value
         with raises(ParseException):
             Stages.parse("UNWIND sizes ARRAY INDEX AS PRESERVE NULL EMPTY ARRAYS true;")
+
+    def test_merge(self):
+        # minimal
+        assert Stages.parse('MERGE INTO COLL mycoll ;') == {
+            '$merge': {'into': 'mycoll'}
+        }
+        assert Stages.parse('MERGE INTO DB mydb COLL mycoll ;') == {
+            '$merge': {'into': {'db': 'mydb', 'coll': 'mycoll'}}
+        }
+        # with WHEN MATCHED clause
+        # REPLACE
+        assert Stages.parse(
+            'MERGE INTO DB mydb COLL mycoll ' 'WHEN MATCHED THEN REPLACE;'
+        ) == {
+            '$merge': {
+                'into': {'coll': 'mycoll', 'db': 'mydb'},
+                'whenMatched': 'replace',
+            }
+        }
+        # KEEP
+        assert Stages.parse(
+            'MERGE INTO DB mydb COLL mycoll ' 'WHEN MATCHED THEN KEEP;'
+        ) == {
+            '$merge': {
+                'into': {'coll': 'mycoll', 'db': 'mydb'},
+                'whenMatched': 'keepExisting',
+            }
+        }
+        # MERGE
+        assert Stages.parse(
+            'MERGE INTO DB mydb COLL mycoll ' 'WHEN MATCHED THEN MERGE;'
+        ) == {
+            '$merge': {'into': {'coll': 'mycoll', 'db': 'mydb'}, 'whenMatched': 'merge'}
+        }
+        # FAIL
+        assert Stages.parse(
+            'MERGE INTO DB mydb COLL mycoll ' 'WHEN MATCHED THEN FAIL;'
+        ) == {
+            '$merge': {'into': {'coll': 'mycoll', 'db': 'mydb'}, 'whenMatched': 'fail'}
+        }
+
+        # with WHEN NOT MATCHED clause
+        # INSERT
+        assert Stages.parse(
+            'MERGE INTO DB mydb COLL mycoll ' 'WHEN NOT MATCHED THEN INSERT;'
+        ) == {
+            '$merge': {
+                'into': {'coll': 'mycoll', 'db': 'mydb'},
+                'whenNotMatched': 'insert',
+            }
+        }
+        # FAIL
+        assert Stages.parse(
+            'MERGE INTO DB mydb COLL mycoll ' 'WHEN NOT MATCHED THEN DISCARD;'
+        ) == {
+            '$merge': {
+                'into': {'coll': 'mycoll', 'db': 'mydb'},
+                'whenNotMatched': 'discard',
+            }
+        }
+        # FAIL
+        assert Stages.parse(
+            'MERGE INTO DB mydb COLL mycoll ' 'WHEN NOT MATCHED THEN FAIL;'
+        ) == {
+            '$merge': {
+                'into': {'coll': 'mycoll', 'db': 'mydb'},
+                'whenNotMatched': 'fail',
+            }
+        }
+
+        # overall check
+        # empty pipeline
+        with raises(ParseException):
+            Stages.parse(
+                '''
+                MERGE INTO DB voting COLL monthlytotals
+                ON _id
+                WHEN MATCHED THEN
+                    ()
+                WHEN NOT MATCHED THEN
+                    INSERT
+                ;
+                '''
+            )
+        # one pipeline
+        assert (
+            Stages.parse(
+                '''
+        MERGE INTO DB voting COLL monthlytotals
+        ON _id
+        WHEN MATCHED THEN
+            (
+                ADD FIELDS thumbsup + '$new.thumbsup' AS thumbsup,
+                           thumbsdown + '$new.thumbsdown' AS thumbsdown;
+            )
+        WHEN NOT MATCHED THEN
+            INSERT
+        ;
+        '''
+            )
+            == {
+                '$merge': {
+                    'into': {'db': 'voting', 'coll': 'monthlytotals'},
+                    'on': ['_id'],
+                    'whenMatched': [
+                        {
+                            '$addFields': {
+                                'thumbsup': {'$add': ['$thumbsup', '$$new.thumbsup']},
+                                'thumbsdown': {
+                                    '$add': ['$thumbsdown', '$$new.thumbsdown']
+                                },
+                            }
+                        }
+                    ],
+                    'whenNotMatched': "insert",
+                }
+            }
+        )
+        # two ONs, two pipelines
+        assert (
+            Stages.parse(
+                '''
+                MERGE INTO DB voting COLL monthlytotals
+                ON _id, month
+                WHEN MATCHED THEN
+                    (
+                        ADD FIELDS thumbsup + '$new.thumbsup' AS thumbsup,
+                                   thumbsdown + '$new.thumbsdown' AS thumbsdown;
+                        SET thumbsup + '$new.thumbsup' AS thumbsup,
+                                   thumbsdown + '$new.thumbsdown' AS thumbsdown;
+                    )
+                WHEN NOT MATCHED THEN
+                    INSERT
+                ;
+                '''
+            )
+            == {
+                '$merge': {
+                    'into': {'db': 'voting', 'coll': 'monthlytotals'},
+                    'on': ['_id', 'month'],
+                    'whenMatched': [
+                        {
+                            '$addFields': {
+                                'thumbsup': {'$add': ['$thumbsup', '$$new.thumbsup']},
+                                'thumbsdown': {
+                                    '$add': ['$thumbsdown', '$$new.thumbsdown']
+                                },
+                            }
+                        },
+                        {
+                            '$set': {
+                                'thumbsup': {'$add': ['$thumbsup', '$$new.thumbsup']},
+                                'thumbsdown': {
+                                    '$add': ['$thumbsdown', '$$new.thumbsdown']
+                                },
+                            }
+                        },
+                    ],
+                    'whenNotMatched': "insert",
+                }
+            }
+        )
