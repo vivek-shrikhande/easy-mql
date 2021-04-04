@@ -1,15 +1,14 @@
+from functools import reduce
+
 from pyparsing import ParseException
 
 from easymql import Grammar
-from easymql.basics import SEMICOLON
-from easymql.core import Keyword, Suppress, Literal, Regex
-from easymql.core import Optional
-from easymql.core import QuotedString
+from easymql.basics import SEMICOLON, RPAREN, LPAREN
+from easymql.core import Keyword, Suppress, Literal, Regex, Optional, QuotedString
 from easymql.datatypes.primary import Number, Boolean
 from easymql.expressions import Expression
 from easymql.expressions.others import FieldPath
-from easymql.utils import delimited_list
-from functools import reduce
+from easymql.utils import delimited_list, keyword_group
 
 
 class CollectionName(Grammar):
@@ -326,6 +325,64 @@ class Unwind(Grammar):
         return {'$unwind': dict([('path', tokens[1])] + tokens[2:])}
 
 
+class Merge(Grammar):
+    class On(Grammar):
+        grammar = Keyword('ON') + delimited_list(Field, min=1)
+
+        @classmethod
+        def action(cls, tokens):
+            print(tokens.asList())
+            return {'on': tokens[1:]}
+
+    class WhenMatched(Grammar):
+        grammar = Suppress(keyword_group('WHEN MATCHED THEN')) + (
+            Keyword('REPLACE')
+            | Keyword('KEEP')
+            | Keyword('MERGE')
+            | Keyword('FAIL')
+            | LPAREN
+            + (AddFields | Set | Project | Unset | ReplaceRoot | ReplaceWith)[1, ...]
+            + RPAREN
+        )
+
+        @classmethod
+        def action(cls, tokens):
+            value = tokens.asList()
+            if isinstance(tokens[0], str):
+                if tokens[0] == 'KEEP':
+                    value = 'keepExisting'
+                else:
+                    value = tokens[0].lower()
+            return {'whenMatched': value}
+
+    class WhenNotMatched(Grammar):
+        grammar = Suppress(keyword_group('WHEN NOT MATCHED THEN')) + (
+            Keyword('INSERT') | Keyword('DISCARD') | Keyword('FAIL')
+        )
+
+        @classmethod
+        def action(cls, tokens):
+            return {'whenNotMatched': tokens[0].lower()}
+
+    grammar = (
+        Keyword('MERGE')
+        + Keyword('INTO')
+        + DbCollectionPath
+        + Optional(On)
+        + Optional(WhenMatched)
+        + Optional(WhenNotMatched)
+        + SEMICOLON
+    )
+
+    @classmethod
+    def action(cls, tokens):
+        return {
+            '$merge': reduce(
+                lambda x, y: {**x, **y}, [{'into': tokens[2]}] + tokens[3:]
+            )
+        }
+
+
 class Stages(Grammar):
 
     grammar = (
@@ -334,6 +391,7 @@ class Stages(Grammar):
         | Limit
         | Lookup
         | Match
+        | Merge
         | Project
         | OutputToDb
         | Redact
