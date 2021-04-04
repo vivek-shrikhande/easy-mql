@@ -82,8 +82,8 @@ class Grammar(metaclass=MetaGrammar):
         return not self == other
 
     @classmethod
-    def parse(cls, string):
-        return cls.grammar.parse(string)
+    def parse(cls, string, explode=True):
+        return cls.grammar.parse(string, explode)
 
     @classmethod
     def _set_parse_action(cls, action):
