@@ -2,7 +2,7 @@ from pyparsing import ParseException
 from pytest import raises
 
 from easymql.datatypes.primary import Integer, Boolean, Decimal, String, Null
-from easymql.stages import Stages, CollectionName, Field
+from easymql.stages import Stages, CollectionName, Field, DbName, DbCollectionPath
 
 
 class TestStages:
@@ -29,6 +29,27 @@ class TestStages:
         # newline with quotes surrounding
         assert CollectionName.parse("'coll_with\\nnewline'") == 'coll_with\nnewline'
 
+    def test_db_name(self):
+        # with whitespace but quotes surrounded
+        assert DbName.parse("'dbname with whitespace'") == 'dbname with whitespace'
+        # no whitespace, no quotes surrounded
+        assert DbName.parse("dbname_without_whitespace") == 'dbname_without_whitespace'
+        # whitespace with no quotes surrounded
+        with raises(ParseException):
+            DbName.parse('dbname with whitespace')
+        # multiline
+        with raises(ParseException):
+            DbName.parse(
+                """'dbname
+                with
+                multiline'"""
+            )
+        # newline but no quotes surrounding
+        with raises(ParseException):
+            DbName.parse('dbname_with\nnewline')
+        # newline with quotes surrounding
+        assert DbName.parse("'dbname_with\\nnewline'") == 'dbname_with\nnewline'
+
     def test_field(self):
         # with whitespace but quotes surrounded
         assert Field.parse("'field with whitespace'") == 'field with whitespace'
@@ -48,7 +69,16 @@ class TestStages:
         with raises(ParseException):
             Field.parse('field_with\nnewline')
         # newline with quotes surrounding
-        assert CollectionName.parse("'field_with\\nnewline'") == 'field_with\nnewline'
+        assert Field.parse("'field_with\\nnewline'") == 'field_with\nnewline'
+
+    def test_db_collection_path(self):
+        assert DbCollectionPath.parse('DB my_db COLL my_collection') == {
+            'db': 'my_db',
+            'coll': 'my_collection',
+        }
+        assert DbCollectionPath.parse('COLL my_collection') == 'my_collection'
+        with raises(ParseException):
+            DbCollectionPath.parse('DB my_db')
 
     def test_add_fields(self):
         assert Stages.parse('ADD FIELDS "item" AS _id, "fruit" AS item;') == {

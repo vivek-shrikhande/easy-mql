@@ -1,8 +1,8 @@
-from pyparsing import alphanums, ParseException
+from pyparsing import ParseException
 
 from easymql import Grammar
 from easymql.basics import SEMICOLON
-from easymql.core import Keyword, Word, Suppress, Literal, Regex
+from easymql.core import Keyword, Suppress, Literal, Regex
 from easymql.core import Optional
 from easymql.core import QuotedString
 from easymql.datatypes.primary import Number, Boolean
@@ -17,9 +17,26 @@ class CollectionName(Grammar):
     grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'[\w.]+')
 
 
+class DbName(Grammar):
+
+    grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'\w+')
+
+
 class Field(Grammar):
 
     grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'[\w.]+')
+
+
+class DbCollectionPath(Grammar):
+
+    grammar = Optional(Keyword('DB') + DbName) + Keyword("COLL") + CollectionName
+
+    @classmethod
+    def action(cls, tokens):
+        if len(tokens) == 2:
+            return tokens[-1]
+        else:
+            return {'db': tokens[1], 'coll': tokens[-1]}
 
 
 class Alias(Grammar):
@@ -110,17 +127,13 @@ class OutputToDb(Grammar):
     grammar = (
         Suppress(Keyword("OUTPUT"))
         + Suppress(Keyword("TO"))
-        + Optional(Suppress(Keyword("DB")) + Word(alphanums + '_'))
-        + Suppress(Keyword("COLL"))
-        + CollectionName
+        + DbCollectionPath
         + SEMICOLON
     )
 
     @classmethod
     def action(cls, tokens):
-        if len(tokens) == 1:
-            return {"$out": tokens[0]}
-        return {"$out": {"db": tokens[0], "coll": tokens[1]}}
+        return {"$out": tokens[0]}
 
 
 class Project(Grammar):
