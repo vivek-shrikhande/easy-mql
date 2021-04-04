@@ -15,6 +15,9 @@ class MetaGrammar(type):
     # def __eq__(cls, other):
     #     return cls.grammar.__eq__(other)
 
+    def __getitem__(cls, key):
+        return cls.grammar[key]
+
     def __mul__(cls, other):
         return cls.grammar.__mul__(other)
 
