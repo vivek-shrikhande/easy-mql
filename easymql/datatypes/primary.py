@@ -1,14 +1,15 @@
 from pyparsing import pyparsing_common
 
 from easymql import Grammar, Adapter
-from easymql.core import Keyword, QuotedString, Regex
+from easymql.core import QuotedString, Regex
 from easymql.exc import DatePartOutOfRangeError
+from easymql.keywords import null, ture, false
 from easymql.utils import cast_to_int
 
 
 class Null(Grammar):
 
-    grammar = Keyword('null')
+    grammar = null
 
     @classmethod
     def action(cls, tokens):
@@ -36,7 +37,7 @@ class String(Grammar):
 
 class Boolean(Grammar):
 
-    grammar = Keyword('true') | Keyword('false')
+    grammar = ture | false
 
     @classmethod
     def action(cls, token):
@@ -190,3 +191,6 @@ class Date(Grammar):
         if tokens['timezone'] is not None:
             kwargs['timezone'] = tokens['timezone']
         return cls(**kwargs)
+
+
+Primary = Null | String | Boolean | Number | Integer | Decimal | Date

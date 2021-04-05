@@ -1,8 +1,8 @@
-from easymql.core import Keyword, Optional, Suppress, White
-
 from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
+from easymql.core import Optional, Suppress, White
+from easymql.keywords import IF, IF_NULL, CASE, WHEN, END, ELSE, THEN
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 
@@ -10,10 +10,7 @@ from easymql.utils import delimited_list
 class Cond(Grammar):
 
     grammar = (
-        Suppress(Keyword("IF"))
-        + LPAREN
-        + delimited_list(expression_proxy, min=3, max=3)
-        + RPAREN
+        Suppress(IF) + LPAREN + delimited_list(expression_proxy, min=3, max=3) + RPAREN
     )
 
     @staticmethod
@@ -23,28 +20,20 @@ class Cond(Grammar):
 
 class IfNull(Grammar, ExpressionAction):
 
-    grammar = (
-        Keyword("IF_NULL")
-        + LPAREN
-        + delimited_list(expression_proxy, min=2, max=2)
-        + RPAREN
-    )
+    grammar = IF_NULL + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
 
 
 class Case(Grammar):
 
     grammar = (
-        Suppress(Keyword("CASE"))
+        Suppress(CASE)
         + delimited_list(
-            Suppress(Keyword("WHEN"))
-            + expression_proxy
-            + Suppress(Keyword("THEN"))
-            + expression_proxy,
+            Suppress(WHEN) + expression_proxy + Suppress(THEN) + expression_proxy,
             delimiter=White(),
             min=1,
         )
-        + Optional(Suppress(Keyword("ELSE")) + expression_proxy)
-        + Suppress(Keyword("END"))
+        + Optional(Suppress(ELSE) + expression_proxy)
+        + Suppress(END)
     )
 
     @staticmethod
@@ -67,6 +56,4 @@ class Case(Grammar):
         return res
 
 
-class ConditionalExpression(Grammar):
-
-    grammar = Cond | IfNull | Case
+ConditionalExpression = Cond | IfNull | Case

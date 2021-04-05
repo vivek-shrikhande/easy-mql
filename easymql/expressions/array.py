@@ -1,9 +1,26 @@
-from easymql.core import Keyword, Optional, Suppress, Word
-from pyparsing import alphanums
 from easymql import Grammar
-from easymql.datatypes.composite import Array
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
+from easymql.core import Suppress
+from easymql.keywords import (
+    ARRAY_ELEM_AT,
+    ARRAY_TO_OBJECT,
+    CONCAT_ARRAYS,
+    FILTER,
+    FIRST,
+    IN,
+    INDEX_OF_ARRAY,
+    IS_ARRAY,
+    LAST,
+    MAP,
+    OBJECT_TO_ARRAY,
+    RANGE,
+    REDUCE,
+    REVERSE_ARRAY,
+    SIZE,
+    SLICE,
+    ZIP,
+)
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 
@@ -11,22 +28,19 @@ from easymql.utils import delimited_list
 class ArrayElemAt(Grammar, ExpressionAction):
 
     grammar = (
-        Keyword('ARRAY_ELEM_AT')
-        + LPAREN
-        + delimited_list(expression_proxy, min=2, max=2)
-        + RPAREN
+        ARRAY_ELEM_AT + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
     )
 
 
 class ArrayToObject(Grammar, ExpressionAction):
 
-    grammar = Keyword('ARRAY_TO_OBJECT') + LPAREN + expression_proxy + RPAREN
+    grammar = ARRAY_TO_OBJECT + LPAREN + expression_proxy + RPAREN
 
 
 class ConcatArrays(Grammar, ExpressionAction):
 
     grammar = (
-        Keyword('CONCAT_ARRAYS')
+        CONCAT_ARRAYS
         + LPAREN
         + delimited_list(expression_proxy, min=2, max=...)
         + RPAREN
@@ -35,7 +49,7 @@ class ConcatArrays(Grammar, ExpressionAction):
 
 class Filter(Grammar, ExpressionAction):
     grammar = (
-        Suppress(Keyword("FILTER"))
+        Suppress(FILTER)
         + LPAREN
         + delimited_list(expression_proxy, min=3, max=3)
         + RPAREN
@@ -48,20 +62,18 @@ class Filter(Grammar, ExpressionAction):
 
 class First(Grammar, ExpressionAction):
 
-    grammar = Keyword('FIRST') + LPAREN + expression_proxy + RPAREN
+    grammar = FIRST + LPAREN + expression_proxy + RPAREN
 
 
 class In(Grammar, ExpressionAction):
 
-    grammar = (
-        Keyword('IN') + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
-    )
+    grammar = IN + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
 
 
 class IndexOfArray(Grammar, ExpressionAction):
 
     grammar = (
-        Keyword('INDEX_OF_ARRAY')
+        INDEX_OF_ARRAY
         + LPAREN
         + delimited_list(expression_proxy, min=2, max=4)
         + RPAREN
@@ -70,20 +82,17 @@ class IndexOfArray(Grammar, ExpressionAction):
 
 class IsArray(Grammar, ExpressionAction):
 
-    grammar = Keyword('IS_ARRAY') + LPAREN + expression_proxy + RPAREN
+    grammar = IS_ARRAY + LPAREN + expression_proxy + RPAREN
 
 
 class Last(Grammar, ExpressionAction):
 
-    grammar = Keyword('LAST') + LPAREN + expression_proxy + RPAREN
+    grammar = LAST + LPAREN + expression_proxy + RPAREN
 
 
 class Map(Grammar, ExpressionAction):
     grammar = (
-        Suppress(Keyword("MAP"))
-        + LPAREN
-        + delimited_list(expression_proxy, min=3, max=3)
-        + RPAREN
+        Suppress(MAP) + LPAREN + delimited_list(expression_proxy, min=3, max=3) + RPAREN
     )
 
     @staticmethod
@@ -93,7 +102,7 @@ class Map(Grammar, ExpressionAction):
 
 class ObjectToArray(Grammar, ExpressionAction):
 
-    grammar = Suppress(Keyword("OBJECT_TO_ARRAY")) + LPAREN + expression_proxy + RPAREN
+    grammar = Suppress(OBJECT_TO_ARRAY) + LPAREN + expression_proxy + RPAREN
 
     @staticmethod
     def action(tokens):
@@ -102,17 +111,12 @@ class ObjectToArray(Grammar, ExpressionAction):
 
 class Range(Grammar, ExpressionAction):
 
-    grammar = (
-        Keyword('RANGE')
-        + LPAREN
-        + delimited_list(expression_proxy, min=2, max=3)
-        + RPAREN
-    )
+    grammar = RANGE + LPAREN + delimited_list(expression_proxy, min=2, max=3) + RPAREN
 
 
 class Reduce(Grammar, ExpressionAction):
     grammar = (
-        Suppress(Keyword("REDUCE"))
+        Suppress(REDUCE)
         + LPAREN
         + delimited_list(expression_proxy, min=3, max=3)
         + RPAREN
@@ -127,30 +131,22 @@ class Reduce(Grammar, ExpressionAction):
 
 class ReverseArray(Grammar, ExpressionAction):
 
-    grammar = Keyword('REVERSE_ARRAY') + LPAREN + expression_proxy + RPAREN
+    grammar = REVERSE_ARRAY + LPAREN + expression_proxy + RPAREN
 
 
 class Size(Grammar, ExpressionAction):
 
-    grammar = Keyword('SIZE') + LPAREN + expression_proxy + RPAREN
+    grammar = SIZE + LPAREN + expression_proxy + RPAREN
 
 
 class Slice(Grammar, ExpressionAction):
 
-    grammar = (
-        Keyword("SLICE")
-        + LPAREN
-        + delimited_list(expression_proxy, min=2, max=3)
-        + RPAREN
-    )
+    grammar = SLICE + LPAREN + delimited_list(expression_proxy, min=2, max=3) + RPAREN
 
 
 class Zip(Grammar, ExpressionAction):
     grammar = (
-        Suppress(Keyword("ZIP"))
-        + LPAREN
-        + delimited_list(expression_proxy, min=1, max=3)
-        + RPAREN
+        Suppress(ZIP) + LPAREN + delimited_list(expression_proxy, min=1, max=3) + RPAREN
     )
 
     @staticmethod
@@ -166,24 +162,22 @@ class Zip(Grammar, ExpressionAction):
         return {"$zip": result}
 
 
-class ArrayExpression(Grammar):
-
-    grammar = (
-        ArrayElemAt
-        | ArrayToObject
-        | ConcatArrays
-        | Filter
-        | First
-        | In
-        | IndexOfArray
-        | IsArray
-        | Last
-        | Map
-        | ObjectToArray
-        | Range
-        | Reduce
-        | ReverseArray
-        | Size
-        | Slice
-        | Zip
-    )
+ArrayExpression = (
+    ArrayElemAt
+    | ArrayToObject
+    | ConcatArrays
+    | Filter
+    | First
+    | In
+    | IndexOfArray
+    | IsArray
+    | Last
+    | Map
+    | ObjectToArray
+    | Range
+    | Reduce
+    | ReverseArray
+    | Size
+    | Slice
+    | Zip
+)

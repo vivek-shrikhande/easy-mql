@@ -1,15 +1,16 @@
 from easymql import Grammar
 from easymql.basics import LPAREN, RPAREN, COMMA
-from easymql.proxies import expression_proxy
-from easymql.utils import delimited_list
 from easymql.core import Keyword, MatchFirst, Optional, Suppress
 from easymql.datatypes.primary import Null
+from easymql.keywords import DATE, ISO_WEEK_DATE, PARSE_DATE, FORMAT_DATE, EXTRACT
+from easymql.proxies import expression_proxy
+from easymql.utils import delimited_list
 
 
 class DateFunc(Grammar):
 
     grammar = (
-        Suppress(Keyword('DATE'))
+        Suppress(DATE)
         + LPAREN
         + delimited_list(expression_proxy, min=1, max=8)
         + RPAREN
@@ -39,7 +40,7 @@ class DateFunc(Grammar):
 class IsoWeekDateFunc(Grammar):
 
     grammar = (
-        Suppress(Keyword('ISO_WEEK_DATE'))
+        Suppress(ISO_WEEK_DATE)
         + LPAREN
         + delimited_list(expression_proxy, min=1, max=8)
         + RPAREN
@@ -69,10 +70,7 @@ class IsoWeekDateFunc(Grammar):
 class ParseDate(Grammar):
 
     grammar = (
-        Keyword('PARSE_DATE')
-        + LPAREN
-        + delimited_list(expression_proxy, min=1, max=3)
-        + RPAREN
+        PARSE_DATE + LPAREN + delimited_list(expression_proxy, min=1, max=3) + RPAREN
     )
 
     @staticmethod
@@ -90,10 +88,7 @@ class ParseDate(Grammar):
 class FormatDate(Grammar):
 
     grammar = (
-        Keyword('FORMAT_DATE')
-        + LPAREN
-        + delimited_list(expression_proxy, min=1, max=3)
-        + RPAREN
+        FORMAT_DATE + LPAREN + delimited_list(expression_proxy, min=1, max=3) + RPAREN
     )
 
     @staticmethod
@@ -126,7 +121,7 @@ class Extract(Grammar):
         'ISO_YEAR': '$isoYear',
     }
     grammar = (
-        Keyword('EXTRACT')
+        EXTRACT
         + LPAREN
         + MatchFirst(map(Keyword, date_part_map.keys()))
         + COMMA
