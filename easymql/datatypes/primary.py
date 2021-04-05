@@ -3,7 +3,7 @@ from pyparsing import pyparsing_common
 from easymql import Grammar, Adapter
 from easymql.core import QuotedString, Regex
 from easymql.exc import DatePartOutOfRangeError
-from easymql.keywords import null, ture, false
+from easymql.keywords import null, true, false
 from easymql.utils import cast_to_int
 
 
@@ -37,7 +37,7 @@ class String(Grammar):
 
 class Boolean(Grammar):
 
-    grammar = ture | false
+    grammar = true | false
 
     @classmethod
     def action(cls, token):
