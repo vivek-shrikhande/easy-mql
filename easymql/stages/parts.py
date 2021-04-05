@@ -1,7 +1,8 @@
 from easymql import Grammar
-from easymql.core import Keyword, Suppress, Regex, Optional, QuotedString
+from easymql.core import Suppress, Regex, Optional, QuotedString
 
 from easymql.expressions import Expression
+from easymql.keywords import DB, COLL, AS
 
 
 class CollectionName(Grammar):
@@ -16,7 +17,7 @@ class DbName(Grammar):
 
 class DbCollectionPath(Grammar):
 
-    grammar = Optional(Keyword('DB') + DbName) + Keyword("COLL") + CollectionName
+    grammar = Optional(DB + DbName) + COLL + CollectionName
 
     @classmethod
     def action(cls, tokens):
@@ -33,7 +34,7 @@ class Field(Grammar):
 
 class Alias(Grammar):
 
-    grammar = Expression + Suppress(Keyword("AS")) + Field
+    grammar = Expression + Suppress(AS) + Field
 
     @classmethod
     def action(cls, tokens):

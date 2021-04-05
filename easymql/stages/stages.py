@@ -4,22 +4,61 @@ from pyparsing import ParseException
 
 from easymql import Grammar
 from easymql.basics import SEMICOLON, RPAREN, LPAREN
-from easymql.core import Keyword, Suppress, Literal, Optional
+from easymql.core import Suppress, Literal, Optional
 from easymql.datatypes.primary import Number, Boolean
 from easymql.expressions import Expression
 from easymql.expressions.others import FieldPath
+from easymql.keywords import (
+    ADD,
+    FIELDS,
+    COUNT,
+    LIMIT,
+    LOOKUP,
+    MATCH,
+    OUTPUT,
+    TO,
+    PROJECT,
+    REDACT,
+    ROOT,
+    WITH,
+    SAMPLE,
+    SKIP,
+    OFFSET,
+    ASC,
+    DESC,
+    SORT,
+    ORDER,
+    BY,
+    UNSET,
+    ARRAY,
+    INDEX,
+    AS,
+    PRESERVE,
+    NULL,
+    EMPTY,
+    ARRAYS,
+    UNWIND,
+    ON,
+    REPLACE,
+    KEEP,
+    INSERT,
+    DISCARD,
+    FAIL,
+    MERGE,
+    INTO,
+    SET,
+    WHEN,
+    NOT,
+    MATCHED,
+    THEN,
+)
 from easymql.stages.parts import CollectionName, DbCollectionPath, Field, Alias
-from easymql.utils import delimited_list, keyword_group
+from easymql.utils import delimited_list
 
 
 class AddFields(Grammar):
 
-    grammar = (
-        Suppress(Keyword("ADD"))
-        + Suppress(Keyword("FIELDS"))
-        + delimited_list(Alias, min=1)
-        + SEMICOLON
-    )
+    grammar = Suppress(ADD + FIELDS) + delimited_list(Alias, min=1) + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -31,12 +70,7 @@ class AddFields(Grammar):
 
 class Count(Grammar):
 
-    grammar = (
-        Suppress(Keyword("COUNT"))
-        + Suppress(Keyword("AS"))
-        + CollectionName
-        + SEMICOLON
-    )
+    grammar = Suppress(COUNT + AS) + CollectionName + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -45,7 +79,7 @@ class Count(Grammar):
 
 class Limit(Grammar):
 
-    grammar = Suppress(Keyword("LIMIT")) + Number + SEMICOLON
+    grammar = Suppress(LIMIT) + Number + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -55,13 +89,13 @@ class Limit(Grammar):
 class Lookup(Grammar):
 
     grammar = (
-        Keyword("LOOKUP")
+        LOOKUP
         + CollectionName
-        + Keyword("ON")
+        + ON
         + Field
         + Literal('=')
         + Field
-        + Optional(Keyword("AS") + Field)
+        + Optional(AS + Field)
         + SEMICOLON
     )
 
@@ -79,7 +113,7 @@ class Lookup(Grammar):
 
 class Match(Grammar):
 
-    grammar = Suppress(Keyword("MATCH")) + Expression + SEMICOLON
+    grammar = Suppress(MATCH) + Expression + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -88,12 +122,7 @@ class Match(Grammar):
 
 class OutputToDb(Grammar):
 
-    grammar = (
-        Suppress(Keyword("OUTPUT"))
-        + Suppress(Keyword("TO"))
-        + DbCollectionPath
-        + SEMICOLON
-    )
+    grammar = Suppress(OUTPUT + TO) + DbCollectionPath + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -102,7 +131,7 @@ class OutputToDb(Grammar):
 
 class Project(Grammar):
     class NewField(Grammar):
-        grammar = Expression + Keyword('AS') + Field
+        grammar = Expression + AS + Field
 
         @classmethod
         def action(cls, tokens):
@@ -120,7 +149,7 @@ class Project(Grammar):
 
     # order matters
     element = NewField | ExcludeOrInclude
-    grammar = Suppress(Keyword("PROJECT")) + delimited_list(element, min=1) + SEMICOLON
+    grammar = Suppress(PROJECT) + delimited_list(element, min=1) + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -129,7 +158,7 @@ class Project(Grammar):
 
 class Redact(Grammar):
 
-    grammar = Suppress(Keyword("REDACT")) + Expression + SEMICOLON
+    grammar = Suppress(REDACT) + Expression + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -137,12 +166,7 @@ class Redact(Grammar):
 
 
 class ReplaceRoot(Grammar):
-    grammar = (
-        Suppress(Keyword("REPLACE"))
-        + Suppress(Keyword("ROOT"))
-        + Expression
-        + SEMICOLON
-    )
+    grammar = Suppress(REPLACE + ROOT) + Expression + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -150,12 +174,7 @@ class ReplaceRoot(Grammar):
 
 
 class ReplaceWith(Grammar):
-    grammar = (
-        Suppress(Keyword("REPLACE"))
-        + Suppress(Keyword("WITH"))
-        + Expression
-        + SEMICOLON
-    )
+    grammar = Suppress(REPLACE + WITH) + Expression + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -164,7 +183,7 @@ class ReplaceWith(Grammar):
 
 class Sample(Grammar):
 
-    grammar = Suppress(Keyword("SAMPLE")) + Number + SEMICOLON
+    grammar = Suppress(SAMPLE) + Number + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -173,7 +192,7 @@ class Sample(Grammar):
 
 class Set(Grammar):
 
-    grammar = Suppress(Keyword("SET")) + delimited_list(Alias, min=1) + SEMICOLON
+    grammar = Suppress(SET) + delimited_list(Alias, min=1) + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -185,9 +204,7 @@ class Set(Grammar):
 
 class Skip(Grammar):
 
-    grammar = (
-        (Suppress(Keyword("SKIP")) | Suppress(Keyword("OFFSET"))) + Number + SEMICOLON
-    )
+    grammar = Suppress(SKIP | OFFSET) + Number + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -196,7 +213,7 @@ class Skip(Grammar):
 
 class Sort(Grammar):
     class PairBySort(Grammar):
-        grammar = Field + (Keyword('ASC') | Keyword('DESC'))
+        grammar = Field + (ASC | DESC)
 
         @classmethod
         def action(cls, tokens):
@@ -207,8 +224,8 @@ class Sort(Grammar):
             return {tokens[0]: tokens[1]}
 
     grammar = (
-        (Suppress(Keyword("SORT")) | Suppress(Keyword("ORDER")))
-        + Suppress(Keyword("BY"))
+        Suppress(SORT | ORDER)
+        + Suppress(BY)
         + delimited_list(PairBySort, min=1)
         + SEMICOLON
     )
@@ -223,13 +240,7 @@ class Sort(Grammar):
 
 class SortByCount(Grammar):
 
-    grammar = (
-        Suppress(Keyword("SORT"))
-        + Suppress(Keyword("BY"))
-        + Suppress(Keyword("COUNT"))
-        + Expression
-        + SEMICOLON
-    )
+    grammar = Suppress(SORT + BY + COUNT) + Expression + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -238,7 +249,7 @@ class SortByCount(Grammar):
 
 class Unset(Grammar):
 
-    grammar = Suppress(Keyword("UNSET")) + delimited_list(Field, min=1) + SEMICOLON
+    grammar = Suppress(UNSET) + delimited_list(Field, min=1) + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -250,30 +261,21 @@ class Unset(Grammar):
 
 class Unwind(Grammar):
     class ArrayIndex(Grammar):
-        grammar = Keyword("ARRAY") + Keyword("INDEX") + Keyword("AS") + Field
+        grammar = ARRAY + INDEX + AS + Field
 
         @classmethod
         def action(cls, tokens):
             return 'includeArrayIndex', tokens[-1]
 
     class PreserverNullEmptyArrays(Grammar):
-        grammar = (
-            Keyword("PRESERVE")
-            + Keyword("NULL")
-            + Keyword("EMPTY")
-            + Keyword("ARRAYS")
-            + Boolean
-        )
+        grammar = PRESERVE + NULL + EMPTY + ARRAYS + Boolean
 
         @classmethod
         def action(cls, tokens):
             return 'preserveNullAndEmptyArrays', tokens[-1]
 
     grammar = (
-        Keyword("UNWIND")
-        + FieldPath
-        + (ArrayIndex | PreserverNullEmptyArrays)[0, 2]
-        + SEMICOLON
+        UNWIND + FieldPath + (ArrayIndex | PreserverNullEmptyArrays)[0, 2] + SEMICOLON
     )
 
     @classmethod
@@ -290,7 +292,7 @@ class Unwind(Grammar):
 
 class Merge(Grammar):
     class On(Grammar):
-        grammar = Keyword('ON') + delimited_list(Field, min=1)
+        grammar = ON + delimited_list(Field, min=1)
 
         @classmethod
         def action(cls, tokens):
@@ -298,11 +300,11 @@ class Merge(Grammar):
             return {'on': tokens[1:]}
 
     class WhenMatched(Grammar):
-        grammar = Suppress(keyword_group('WHEN MATCHED THEN')) + (
-            Keyword('REPLACE')
-            | Keyword('KEEP')
-            | Keyword('MERGE')
-            | Keyword('FAIL')
+        grammar = Suppress(WHEN + MATCHED + THEN) + (
+            REPLACE
+            | KEEP
+            | MERGE
+            | FAIL
             | LPAREN
             + (AddFields | Set | Project | Unset | ReplaceRoot | ReplaceWith)[1, ...]
             + RPAREN
@@ -319,17 +321,15 @@ class Merge(Grammar):
             return {'whenMatched': value}
 
     class WhenNotMatched(Grammar):
-        grammar = Suppress(keyword_group('WHEN NOT MATCHED THEN')) + (
-            Keyword('INSERT') | Keyword('DISCARD') | Keyword('FAIL')
-        )
+        grammar = Suppress(WHEN + NOT + MATCHED + THEN) + (INSERT | DISCARD | FAIL)
 
         @classmethod
         def action(cls, tokens):
             return {'whenNotMatched': tokens[0].lower()}
 
     grammar = (
-        Keyword('MERGE')
-        + Keyword('INTO')
+        MERGE
+        + INTO
         + DbCollectionPath
         + Optional(On)
         + Optional(WhenMatched)
