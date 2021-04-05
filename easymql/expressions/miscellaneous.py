@@ -1,14 +1,13 @@
-from easymql.core import Keyword
-
 from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.datatypes.primary import Decimal
+from easymql.keywords import RANDOM, SAMPLE_RATE
 
 
 class Random(Grammar, ExpressionAction):
 
-    grammar = Keyword("RANDOM") + LPAREN + RPAREN
+    grammar = RANDOM + LPAREN + RPAREN
 
     @staticmethod
     def action(tokens):
@@ -17,9 +16,7 @@ class Random(Grammar, ExpressionAction):
 
 class SampleRate(Grammar, ExpressionAction):
 
-    grammar = Keyword("SAMPLE_RATE") + LPAREN + Decimal + RPAREN
+    grammar = SAMPLE_RATE + LPAREN + Decimal + RPAREN
 
 
-class MiscellaneousExpression(Grammar):
-
-    grammar = Random | SampleRate
+MiscellaneousExpression = Random | SampleRate

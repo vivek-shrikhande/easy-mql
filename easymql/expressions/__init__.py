@@ -1,9 +1,9 @@
 from easymql import Grammar
 from easymql.core import InfixExpression, OpAssoc, OneOf, Keyword
 from easymql.datatypes import DataType
+from easymql.expressions.accumulators import AccumulatorExpression
 from easymql.expressions.arithmetic import ArithmeticExpression
 from easymql.expressions.array import ArrayExpression
-from easymql.expressions.accumulators import AccumulatorExpression
 from easymql.expressions.comparison import Cmp
 from easymql.expressions.conditional import ConditionalExpression
 from easymql.expressions.datasize import DataSizeExpression
