@@ -35,18 +35,23 @@ class Concat(Grammar, ExpressionAction):
 
 class IndexOfBytes(Grammar, ExpressionAction):
 
-    grammar = INDEX_OF_BYTES + LPAREN + delimited_list(expression_proxy, min=2, max=4) + RPAREN
+    grammar = (
+        INDEX_OF_BYTES
+        + LPAREN
+        + delimited_list(expression_proxy, min=2, max=4)
+        + RPAREN
+    )
 
 
 class IndexOfCP(Grammar, ExpressionAction):
 
-    grammar = INDEX_OF_CP + LPAREN + delimited_list(expression_proxy, min=2, max=4) + RPAREN
+    grammar = (
+        INDEX_OF_CP + LPAREN + delimited_list(expression_proxy, min=2, max=4) + RPAREN
+    )
 
     @staticmethod
     def action(tokens):
-        return {
-            '$indexOfCP': tokens[1:]
-        }
+        return {'$indexOfCP': tokens[1:]}
 
 
 class Trim(Grammar, ExpressionAction):
@@ -55,11 +60,7 @@ class Trim(Grammar, ExpressionAction):
 
     @staticmethod
     def action(tokens):
-        return {
-            '$trim': dict(
-                zip(('input', 'chars'), tokens[1:])
-            )
-        }
+        return {'$trim': dict(zip(('input', 'chars'), tokens[1:]))}
 
 
 class LTrim(Grammar, ExpressionAction):
@@ -68,11 +69,7 @@ class LTrim(Grammar, ExpressionAction):
 
     @staticmethod
     def action(tokens):
-        return {
-            '$ltrim': dict(
-                zip(('input', 'chars'), tokens[1:])
-            )
-        }
+        return {'$ltrim': dict(zip(('input', 'chars'), tokens[1:]))}
 
 
 class RTrim(Grammar, ExpressionAction):
@@ -81,11 +78,7 @@ class RTrim(Grammar, ExpressionAction):
 
     @staticmethod
     def action(tokens):
-        return {
-            '$rtrim': dict(
-                zip(('input', 'chars'), tokens[1:])
-            )
-        }
+        return {'$rtrim': dict(zip(('input', 'chars'), tokens[1:]))}
 
 
 class RegexFind(Grammar):
@@ -102,11 +95,7 @@ class RegexFind(Grammar):
 
     @staticmethod
     def action(tokens):
-        return {
-            '$regexFind': dict(
-                zip(('input', 'regex', 'options'), tokens[1:])
-            )
-        }
+        return {'$regexFind': dict(zip(('input', 'regex', 'options'), tokens[1:]))}
 
 
 class RegexFindAll(Grammar):
@@ -123,11 +112,7 @@ class RegexFindAll(Grammar):
 
     @staticmethod
     def action(tokens):
-        return {
-            '$regexFindAll': dict(
-                zip(('input', 'regex', 'options'), tokens[1:])
-            )
-        }
+        return {'$regexFindAll': dict(zip(('input', 'regex', 'options'), tokens[1:]))}
 
 
 class RegexMatch(Grammar):
@@ -144,47 +129,27 @@ class RegexMatch(Grammar):
 
     @staticmethod
     def action(tokens):
-        return {
-            '$regexMatch': dict(
-                zip(('input', 'regex', 'options'), tokens[1:])
-            )
-        }
+        return {'$regexMatch': dict(zip(('input', 'regex', 'options'), tokens[1:]))}
 
 
 class Replace(Grammar):
 
-    grammar = (
-        REPLACE
-        + LPAREN
-        + delimited_list(expression_proxy, min=3, max=3)
-        + RPAREN
-    )
+    grammar = REPLACE + LPAREN + delimited_list(expression_proxy, min=3, max=3) + RPAREN
 
     @staticmethod
     def action(tokens):
-        return {
-            '$replaceOne': dict(
-                zip(('input', 'find', 'replacement'), tokens[1:])
-            )
-        }
+        return {'$replaceOne': dict(zip(('input', 'find', 'replacement'), tokens[1:]))}
 
 
 class ReplaceAll(Grammar):
 
     grammar = (
-        REPLACE_ALL
-        + LPAREN
-        + delimited_list(expression_proxy, min=3, max=3)
-        + RPAREN
+        REPLACE_ALL + LPAREN + delimited_list(expression_proxy, min=3, max=3) + RPAREN
     )
 
     @staticmethod
     def action(tokens):
-        return {
-            '$replaceAll': dict(
-                zip(('input', 'find', 'replacement'), tokens[1:])
-            )
-        }
+        return {'$replaceAll': dict(zip(('input', 'find', 'replacement'), tokens[1:]))}
 
 
 class Split(Grammar, ExpressionAction):
@@ -198,9 +163,7 @@ class StringLenght(Grammar, ExpressionAction):
 
     @staticmethod
     def action(tokens):
-        return {
-            '$strLenBytes': tokens[1]
-        }
+        return {'$strLenBytes': tokens[1]}
 
 
 class StringLenghtCP(Grammar, ExpressionAction):
@@ -209,14 +172,14 @@ class StringLenghtCP(Grammar, ExpressionAction):
 
     @staticmethod
     def action(tokens):
-        return {
-            '$strLenCP': tokens[1]
-        }
+        return {'$strLenCP': tokens[1]}
 
 
 class Strcasecmp(Grammar, ExpressionAction):
 
-    grammar = STRCASECMP + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
+    grammar = (
+        STRCASECMP + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
+    )
 
 
 class Substr(Grammar, ExpressionAction):
@@ -226,18 +189,20 @@ class Substr(Grammar, ExpressionAction):
 
 class SubstrBytes(Grammar, ExpressionAction):
 
-    grammar = SUBSTR_BYTES + LPAREN + delimited_list(expression_proxy, min=3, max=3) + RPAREN
+    grammar = (
+        SUBSTR_BYTES + LPAREN + delimited_list(expression_proxy, min=3, max=3) + RPAREN
+    )
 
 
 class SubstrCP(Grammar, ExpressionAction):
 
-    grammar = SUBSTR_CP + LPAREN + delimited_list(expression_proxy, min=3, max=3) + RPAREN
+    grammar = (
+        SUBSTR_CP + LPAREN + delimited_list(expression_proxy, min=3, max=3) + RPAREN
+    )
 
     @staticmethod
     def action(tokens):
-        return {
-            '$substrCP': tokens[1:]
-        }
+        return {'$substrCP': tokens[1:]}
 
 
 class toLower(Grammar, ExpressionAction):
