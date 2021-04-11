@@ -14,6 +14,7 @@ from easymql.expressions.others import FieldPath
 from easymql.expressions.set import SetExpression
 from easymql.expressions.trigonometry import TrigonometryExpression
 from easymql.expressions.type import TypeExpression
+from easymql.expressions.strings import StringExpression
 from easymql.proxies import expression_proxy
 
 
@@ -34,6 +35,7 @@ class FuncExpression(Grammar):
         | TrigonometryExpression
         | TypeExpression
         | DataType
+        | StringExpression
         | FieldPath
     )
 
