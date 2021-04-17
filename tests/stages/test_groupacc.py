@@ -36,9 +36,7 @@ class TestGroupByAccumulatorsExpression:
             self.exp.parse("MAX()")
 
     def test_merge_object(self):
-        assert self.exp.parse('MERGE_OBJECTS({"a": 1})') == {
-            '$mergeObjects': {'a': 1}
-        }
+        assert self.exp.parse('MERGE_OBJECTS({"a": 1})') == {'$mergeObjects': {'a': 1}}
         with raises(ParseException):
             self.exp.parse('MERGE_OBJECTS({"a": 1}, null)')
         with raises(ParseException):
