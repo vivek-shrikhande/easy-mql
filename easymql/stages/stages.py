@@ -8,50 +8,8 @@ from easymql.core import Suppress, Literal, Optional
 from easymql.datatypes.primary import Number, Boolean
 from easymql.expressions import Expression
 from easymql.expressions.others import FieldPath
-from easymql.keywords import (
-    ADD,
-    FIELDS,
-    COUNT,
-    LIMIT,
-    LOOKUP,
-    MATCH,
-    OUTPUT,
-    TO,
-    PROJECT,
-    REDACT,
-    ROOT,
-    WITH,
-    SAMPLE,
-    SKIP,
-    OFFSET,
-    ASC,
-    DESC,
-    SORT,
-    ORDER,
-    BY,
-    UNSET,
-    ARRAY,
-    INDEX,
-    AS,
-    PRESERVE,
-    NULL,
-    EMPTY,
-    ARRAYS,
-    UNWIND,
-    ON,
-    REPLACE,
-    KEEP,
-    INSERT,
-    DISCARD,
-    FAIL,
-    MERGE,
-    INTO,
-    SET,
-    WHEN,
-    NOT,
-    MATCHED,
-    THEN,
-)
+from easymql.keywords import *
+from easymql.stages.groupacc import GroupByAccumulatorExpression
 from easymql.stages.parts import CollectionName, DbCollectionPath, Field, Alias
 from easymql.utils import delimited_list
 
@@ -75,6 +33,30 @@ class Count(Grammar):
     @classmethod
     def action(cls, tokens):
         return {"$count": tokens[0]}
+
+
+class GroupBy(Grammar):
+    class ProjectField(Grammar):
+
+        grammar = GroupByAccumulatorExpression + AS + Field
+
+        @classmethod
+        def action(cls, tokens):
+            return {tokens[-1]: tokens[0]}
+
+    grammar = (
+        GROUP
+        + BY
+        + Expression
+        + Optional(PROJECT + delimited_list(ProjectField, min=1))
+        + SEMICOLON
+    )
+
+    @classmethod
+    def action(cls, tokens):
+        return {
+            '$group': reduce(lambda x, y: {**x, **y}, [{'_id': tokens[2]}] + tokens[4:])
+        }
 
 
 class Limit(Grammar):
@@ -349,6 +331,7 @@ class Merge(Grammar):
 Stages = (
     AddFields
     | Count
+    | GroupBy
     | Limit
     | Lookup
     | Match
