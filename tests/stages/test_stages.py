@@ -3,84 +3,9 @@ from pytest import raises
 
 from easymql.datatypes.primary import Integer, Boolean, Decimal, String, Null
 from easymql.stages import Stages
-from easymql.stages.parts import CollectionName, Field, DbName, DbCollectionPath
 
 
 class TestStages:
-    def test_collection_name(self):
-        # with whitespace but quotes surrounded
-        assert CollectionName.parse("'coll with whitespace'") == 'coll with whitespace'
-        # no whitespace, no quotes surrounded
-        assert (
-            CollectionName.parse("coll_without_whitespace") == 'coll_without_whitespace'
-        )
-        # whitespace with no quotes surrounded
-        with raises(ParseException):
-            CollectionName.parse('coll with whitespace')
-        # multiline
-        with raises(ParseException):
-            CollectionName.parse(
-                """'coll
-                with
-                multiline'"""
-            )
-        # newline but no quotes surrounding
-        with raises(ParseException):
-            CollectionName.parse('coll_with\nnewline')
-        # newline with quotes surrounding
-        assert CollectionName.parse("'coll_with\\nnewline'") == 'coll_with\nnewline'
-
-    def test_db_name(self):
-        # with whitespace but quotes surrounded
-        assert DbName.parse("'dbname with whitespace'") == 'dbname with whitespace'
-        # no whitespace, no quotes surrounded
-        assert DbName.parse("dbname_without_whitespace") == 'dbname_without_whitespace'
-        # whitespace with no quotes surrounded
-        with raises(ParseException):
-            DbName.parse('dbname with whitespace')
-        # multiline
-        with raises(ParseException):
-            DbName.parse(
-                """'dbname
-                with
-                multiline'"""
-            )
-        # newline but no quotes surrounding
-        with raises(ParseException):
-            DbName.parse('dbname_with\nnewline')
-        # newline with quotes surrounding
-        assert DbName.parse("'dbname_with\\nnewline'") == 'dbname_with\nnewline'
-
-    def test_field(self):
-        # with whitespace but quotes surrounded
-        assert Field.parse("'field with whitespace'") == 'field with whitespace'
-        # no whitespace, no quotes surrounded
-        assert Field.parse("field_without_whitespace") == 'field_without_whitespace'
-        # whitespace with no quotes surrounded
-        with raises(ParseException):
-            Field.parse('field with whitespace')
-        # multiline
-        with raises(ParseException):
-            Field.parse(
-                """'field
-                with
-                multiline'"""
-            )
-        # newline but no quotes surrounding
-        with raises(ParseException):
-            Field.parse('field_with\nnewline')
-        # newline with quotes surrounding
-        assert Field.parse("'field_with\\nnewline'") == 'field_with\nnewline'
-
-    def test_db_collection_path(self):
-        assert DbCollectionPath.parse('DB my_db COLL my_collection') == {
-            'db': 'my_db',
-            'coll': 'my_collection',
-        }
-        assert DbCollectionPath.parse('COLL my_collection') == 'my_collection'
-        with raises(ParseException):
-            DbCollectionPath.parse('DB my_db')
-
     def test_add_fields(self):
         assert Stages.parse('ADD FIELDS "item" AS _id, "fruit" AS item;') == {
             '$addFields': {'_id': 'item', 'item': 'fruit'}
@@ -99,6 +24,68 @@ class TestStages:
         assert Stages.parse("COUNT AS 'passing_Score';") == {'$count': 'passing_Score'}
         with raises(ParseException):
             Stages.parse('COUNT AS ;')
+
+    def test_group_by(self):
+        assert Stages.parse('GROUP BY item;') == {'$group': {'_id': '$item'}}
+        assert Stages.parse('GROUP BY null PROJECT SUM(1) AS count;') == {
+            '$group': {'_id': None, 'count': {'$sum': 1}}
+        }
+        assert Stages.parse(
+            'GROUP BY item PROJECT SUM(1) AS count, SUM(price * quantity) AS totalSaleAmount;'
+        ) == {
+            '$group': {
+                '_id': '$item',
+                'count': {'$sum': 1},
+                'totalSaleAmount': {'$sum': {'$multiply': ['$price', '$quantity']}},
+            }
+        }
+        assert (
+            Stages.parse(
+                '''
+            GROUP BY FORMAT_DATE("%Y-%m-%d", date)
+            PROJECT SUM(price * quantity) AS totalSaleAmount,
+                    AVG(quantity) AS averageQuantity,
+                    SUM(1) AS count;
+            '''
+            )
+            == {
+                '$group': {
+                    '_id': {
+                        '$dateToString': {'date': String('%Y-%m-%d'), 'format': '$date'}
+                    },
+                    'averageQuantity': {'$avg': '$quantity'},
+                    'count': {'$sum': 1},
+                    'totalSaleAmount': {'$sum': {'$multiply': ['$price', '$quantity']}},
+                }
+            }
+        )
+        assert (
+            Stages.parse(
+                '''
+                GROUP BY null
+                PROJECT SUM(price * quantity) AS totalSaleAmount,
+                        AVG(quantity) AS averageQuantity,
+                        SUM(1) AS count;
+                '''
+            )
+            == {
+                '$group': {
+                    '_id': None,
+                    'totalSaleAmount': {'$sum': {'$multiply': ['$price', '$quantity']}},
+                    'averageQuantity': {'$avg': '$quantity'},
+                    'count': {'$sum': 1},
+                }
+            }
+        )
+        assert (
+            Stages.parse(
+                '''
+                GROUP BY author
+                PROJECT PUSH('$ROOT') AS books;
+                '''
+            )
+            == {'$group': {'_id': '$author', 'books': {'$push': '$$ROOT'}}}
+        )
 
     def test_limit(self):
         assert Stages.parse('LIMIT 50;') == {'$limit': Integer(50)}

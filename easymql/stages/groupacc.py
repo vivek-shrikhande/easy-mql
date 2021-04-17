@@ -1,5 +1,5 @@
 from easymql import Grammar
-from easymql.actions import ExpressionAction
+from easymql.actions import UnaryExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.expressions import Expression
 from easymql.keywords import (
@@ -17,57 +17,57 @@ from easymql.keywords import (
 )
 
 
-class AddToSet(Grammar, ExpressionAction):
+class AddToSet(Grammar, UnaryExpressionAction):
 
     grammar = ADD_TO_SET + LPAREN + Expression + RPAREN
 
 
-class Avg(Grammar, ExpressionAction):
+class Avg(Grammar, UnaryExpressionAction):
 
     grammar = AVG + LPAREN + Expression + RPAREN
 
 
-class First(Grammar, ExpressionAction):
+class First(Grammar, UnaryExpressionAction):
 
     grammar = FIRST + LPAREN + Expression + RPAREN
 
 
-class Last(Grammar, ExpressionAction):
+class Last(Grammar, UnaryExpressionAction):
 
     grammar = LAST + LPAREN + Expression + RPAREN
 
 
-class Max(Grammar, ExpressionAction):
+class Max(Grammar, UnaryExpressionAction):
 
     grammar = MAX + LPAREN + Expression + RPAREN
 
 
-class MergeObjects(Grammar, ExpressionAction):
+class MergeObjects(Grammar, UnaryExpressionAction):
 
     grammar = MERGE_OBJECTS + LPAREN + Expression + RPAREN
 
 
-class Min(Grammar, ExpressionAction):
+class Min(Grammar, UnaryExpressionAction):
 
     grammar = MIN + LPAREN + Expression + RPAREN
 
 
-class Push(Grammar, ExpressionAction):
+class Push(Grammar, UnaryExpressionAction):
 
     grammar = PUSH + LPAREN + Expression + RPAREN
 
 
-class StdDevPop(Grammar, ExpressionAction):
+class StdDevPop(Grammar, UnaryExpressionAction):
 
     grammar = STD_DEV_POP + LPAREN + Expression + RPAREN
 
 
-class StdDevSamp(Grammar, ExpressionAction):
+class StdDevSamp(Grammar, UnaryExpressionAction):
 
     grammar = STD_DEV_SAMP + LPAREN + Expression + RPAREN
 
 
-class Sum(Grammar, ExpressionAction):
+class Sum(Grammar, UnaryExpressionAction):
 
     grammar = SUM + LPAREN + Expression + RPAREN
 
