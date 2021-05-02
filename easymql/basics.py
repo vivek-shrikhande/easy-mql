@@ -13,4 +13,5 @@ from easymql.core import Suppress, Literal
     COMMA,
     PERIOD,
     HYPHEN,
-) = map(Suppress, map(Literal, tuple('(){}[]:;,.-')))
+    EQUALS,
+) = map(Suppress, map(Literal, tuple('(){}[]:;,.-=')))
