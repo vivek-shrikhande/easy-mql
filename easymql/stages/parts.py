@@ -3,6 +3,7 @@ from easymql.core import Suppress, Regex, Optional, QuotedString
 
 from easymql.expressions import Expression
 from easymql.keywords import DB, COLL, AS
+from easymql.stages.groupacc import GroupByAccumulatorExpression
 
 
 class CollectionName(Grammar):
@@ -39,3 +40,12 @@ class Alias(Grammar):
     @classmethod
     def action(cls, tokens):
         return {tokens[1]: tokens[0]}
+
+
+class ProjectAccumulator(Grammar):
+
+    grammar = GroupByAccumulatorExpression + AS + Field
+
+    @classmethod
+    def action(cls, tokens):
+        return {tokens[-1]: tokens[0]}

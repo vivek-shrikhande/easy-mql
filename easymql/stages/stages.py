@@ -2,15 +2,11 @@ from functools import reduce
 
 from pyparsing import ParseException
 
-from easymql import Grammar
-from easymql.basics import SEMICOLON, RPAREN, LPAREN
-from easymql.core import Suppress, Literal, Optional
+from easymql.basics import *
 from easymql.datatypes.primary import Number, Boolean
-from easymql.expressions import Expression
 from easymql.expressions.others import FieldPath
 from easymql.keywords import *
-from easymql.stages.groupacc import GroupByAccumulatorExpression
-from easymql.stages.parts import CollectionName, DbCollectionPath, Field, Alias
+from easymql.stages.parts import *
 from easymql.utils import delimited_list
 
 
@@ -36,19 +32,12 @@ class Count(Grammar):
 
 
 class GroupBy(Grammar):
-    class ProjectField(Grammar):
-
-        grammar = GroupByAccumulatorExpression + AS + Field
-
-        @classmethod
-        def action(cls, tokens):
-            return {tokens[-1]: tokens[0]}
 
     grammar = (
         GROUP
         + BY
         + Expression
-        + Optional(PROJECT + delimited_list(ProjectField, min=1))
+        + Optional(PROJECT + delimited_list(ProjectAccumulator, min=1))
         + SEMICOLON
     )
 

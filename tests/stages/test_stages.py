@@ -86,6 +86,25 @@ class TestStages:
             )
             == {'$group': {'_id': '$author', 'books': {'$push': '$$ROOT'}}}
         )
+        # with object expression as _id
+        assert (
+            Stages.parse(
+                '''
+                GROUP BY { "day": EXTRACT(DAY_OF_YEAR, date),
+                           "year": EXTRACT(YEAR, date) }
+                PROJECT PUSH({ "item": item, "quantity": quantity }) AS itemsSold;
+                '''
+            )
+            == {
+                '$group': {
+                    '_id': {
+                        'day': {'$dayOfYear': {'date': "$date"}},
+                        'year': {'$year': {'date': "$date"}},
+                    },
+                    'itemsSold': {'$push': {'item': "$item", 'quantity': "$quantity"}},
+                }
+            }
+        )
 
     def test_limit(self):
         assert Stages.parse('LIMIT 50;') == {'$limit': Integer(50)}
