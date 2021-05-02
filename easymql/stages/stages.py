@@ -3,7 +3,8 @@ from functools import reduce
 from pyparsing import ParseException
 
 from easymql.basics import *
-from easymql.datatypes.primary import Number, Boolean
+from easymql.datatypes.primary import Number, Boolean, String
+from easymql.datatypes.composite import Array
 from easymql.expressions.others import FieldPath
 from easymql.keywords import *
 from easymql.stages.parts import *
@@ -20,6 +21,40 @@ class AddFields(Grammar):
         for t in tokens:
             fields_dict.update(t)
         return {"$addFields": fields_dict}
+
+
+class BucketBy(Grammar):
+    class Default(Grammar):
+        grammar = DEFAULT + String
+
+        @classmethod
+        def action(cls, tokens):
+            return {'default': tokens[-1]}
+
+    class Output(Grammar):
+        grammar = PROJECT + delimited_list(ProjectAccumulator, min=1)
+
+        @classmethod
+        def action(cls, tokens):
+            return {'output': reduce(lambda x, y: {**x, **y}, tokens[1:])}
+
+    grammar = (
+        BUCKET
+        + BY
+        + Expression
+        + BOUNDARIES
+        + Array
+        + Optional(Default)
+        + Optional(Output)
+        + SEMICOLON
+    )
+
+    @classmethod
+    def action(cls, tokens):
+        doc = {'groupBy': tokens[2], 'boundaries': tokens[4]}
+        for t in tokens[5:]:
+            doc.update(t)
+        return {'$bucket': doc}
 
 
 class Count(Grammar):
@@ -319,6 +354,7 @@ class Merge(Grammar):
 
 Stages = (
     AddFields
+    | BucketBy
     | Count
     | GroupBy
     | Limit
