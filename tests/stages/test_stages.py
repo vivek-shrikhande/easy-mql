@@ -19,6 +19,81 @@ class TestStages:
         with raises(ParseException):
             Stages.parse('ADD FIELDS ;')
 
+    def test_bucket_by(self):
+        # with project
+        assert (
+            Stages.parse(
+                (
+                    '''
+                BUCKET BY year_born
+                BOUNDARIES [1840+5, 1850, 1860, 1870, 1880]
+                PROJECT SUM(1) AS count;
+                '''
+                )
+            )
+            == {
+                '$bucket': {
+                    'groupBy': "$year_born",
+                    'boundaries': [{'$add': [1840, 5]}, 1850, 1860, 1870, 1880],
+                    'output': {
+                        'count': {'$sum': 1},
+                    },
+                }
+            }
+        )
+        # with default
+        assert (
+            Stages.parse(
+                (
+                    '''
+                BUCKET BY year_born
+                BOUNDARIES [1840+5, 1850, 1860, 1870, 1880]
+                DEFAULT "Other";
+                '''
+                )
+            )
+            == {
+                '$bucket': {
+                    'groupBy': "$year_born",
+                    'boundaries': [{'$add': [1840, 5]}, 1850, 1860, 1870, 1880],
+                    'default': 'Other',
+                }
+            }
+        )
+        # with both default and project
+        assert (
+            Stages.parse(
+                (
+                    '''
+                BUCKET BY year_born
+                BOUNDARIES [1840+5, 1850, 1860, 1870, 1880]
+                DEFAULT "Other"
+                PROJECT SUM(1) AS count,
+                        PUSH({
+                            "name": CONCAT(first_name, " ", last_name),
+                            "year_born": year_born
+                        }) AS artists;
+                '''
+                )
+            )
+            == {
+                '$bucket': {
+                    'groupBy': "$year_born",
+                    'boundaries': [{'$add': [1840, 5]}, 1850, 1860, 1870, 1880],
+                    'default': "Other",
+                    'output': {
+                        'count': {'$sum': 1},
+                        'artists': {
+                            '$push': {
+                                "name": {'$concat': ["$first_name", " ", "$last_name"]},
+                                "year_born": "$year_born",
+                            }
+                        },
+                    },
+                }
+            }
+        )
+
     def test_count(self):
         assert Stages.parse("COUNT AS passing_Score;") == {'$count': 'passing_Score'}
         assert Stages.parse("COUNT AS 'passing_Score';") == {'$count': 'passing_Score'}
