@@ -1,13 +1,13 @@
 from pyparsing import ParseException
 from pytest import raises
 
-from easymql.datatypes import DataType
+from easymql.expressions import Expression
 from easymql.datatypes.primary import Boolean, Decimal, Integer, Null, String
 
 
 class TestCompositeDataType:
     def test_array(self):
-        array = DataType
+        array = Expression
         assert array.parse('[]') == []
         assert array.parse('[[], 0]') == [[], Integer(0)]
         assert array.parse('[{"a": "b"}]') == [{"a": String("b")}]
@@ -22,9 +22,15 @@ class TestCompositeDataType:
             {},
             {"a": []},
         ]
+        # array with expressions
+        assert array.parse('[a+b, c+d, CONCAT("hello", " ", "world!")]') == [
+            {'$add': ['$a', '$b']},
+            {'$add': ['$c', '$d']},
+            {'$concat': ['hello', ' ', 'world!']},
+        ]
 
     def test_object(self):
-        obj = DataType
+        obj = Expression
         assert obj.parse('{}') == {}
         assert obj.parse('{"size": 1024}') == {'size': Integer(1024)}
         with raises(ParseException):
@@ -43,4 +49,16 @@ class TestCompositeDataType:
             'string': String('hello'),
             'array': [Integer(1), {}],
             'object': {'array': []},
+        }
+        # object with expressions
+        assert obj.parse(
+            '''
+            {
+                "day": EXTRACT(DAY_OF_YEAR, date),
+                "year": EXTRACT(YEAR, date)
+            }
+            '''
+        ) == {
+            'day': {'$dayOfYear': {'date': '$date'}},
+            'year': {'$year': {'date': '$date'}},
         }

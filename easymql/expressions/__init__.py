@@ -21,7 +21,8 @@ from easymql.proxies import expression_proxy
 class FuncExpression(Grammar):
 
     grammar = (
-        AccumulatorExpression
+        DataType
+        | AccumulatorExpression
         | ArithmeticExpression
         | ArrayExpression
         | ConditionalExpression
@@ -34,7 +35,6 @@ class FuncExpression(Grammar):
         | SetExpression
         | TrigonometryExpression
         | TypeExpression
-        | DataType
         | StringExpression
         | FieldPath
     )
