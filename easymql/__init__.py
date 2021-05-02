@@ -1,3 +1,8 @@
+from pyparsing import ParserElement
+
+ParserElement.enablePackrat()
+
+
 class MetaGrammar(type):
     def __init__(cls, name, bases, dct):
         super(MetaGrammar, cls).__init__(name, bases, dct)

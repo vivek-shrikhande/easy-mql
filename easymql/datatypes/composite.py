@@ -3,13 +3,13 @@ from functools import reduce
 from easymql import Grammar
 from easymql.basics import *
 from easymql.core import QuotedString
-from easymql.proxies import data_type_proxy
+from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 
 
 class Array(Grammar):
 
-    grammar = LBRACK + delimited_list(data_type_proxy, min=0, max=...) + RBRACK
+    grammar = LBRACK + delimited_list(expression_proxy, min=0, max=...) + RBRACK
 
     @classmethod
     def action(cls, tokens):
@@ -18,7 +18,7 @@ class Array(Grammar):
 
 class KeyValuePair(Grammar):
 
-    grammar = QuotedString(quoteChar='"', escChar='\\') + COLON + data_type_proxy
+    grammar = QuotedString(quoteChar='"', escChar='\\') + COLON + expression_proxy
 
     @classmethod
     def action(cls, tokens):
