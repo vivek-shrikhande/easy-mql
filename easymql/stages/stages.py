@@ -352,10 +352,50 @@ class Merge(Grammar):
         }
 
 
+class Facet(Grammar):
+    class NewPipeline(Grammar):
+        """This should be updated with the new stages whenever get
+        added that are supported in FACET"""
+
+        allowed_stages = (
+            AddFields
+            | BucketBy
+            | Count
+            | GroupBy
+            | Limit
+            | Lookup
+            | Match
+            | Project
+            | Redact
+            | ReplaceRoot
+            | ReplaceWith
+            | Sample
+            | Set
+            | Skip
+            | Sort
+            | SortByCount
+            | Unset
+            | Unwind
+        )
+        grammar = LPAREN + allowed_stages[1, ...] + RPAREN + Suppress(AS) + Field
+
+        @classmethod
+        def action(cls, tokens):
+            print(tokens)
+            return {tokens[-1]: tokens[0:-1]}
+
+    grammar = FACET + delimited_list(NewPipeline, min=1) + SEMICOLON
+
+    @classmethod
+    def action(cls, tokens):
+        return {'$facet': reduce(lambda x, y: {**x, **y}, tokens[1:])}
+
+
 Stages = (
     AddFields
     | BucketBy
     | Count
+    | Facet
     | GroupBy
     | Limit
     | Lookup

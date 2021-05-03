@@ -568,3 +568,68 @@ class TestStages:
                 }
             }
         )
+
+    def test_facet(self):
+        with raises(ParseException):
+            Stages.parse('FACET ;')
+        with raises(ParseException):
+            Stages.parse('FACET ();')
+        assert Stages.parse('FACET (UNWIND tags;) AS categorizedByTags;') == {
+            '$facet': {'categorizedByTags': [{'$unwind': {'path': '$tags'}}]}
+        }
+        assert (
+            Stages.parse(
+                '''
+                FACET
+                (
+                    UNWIND tags;
+                    SORT BY COUNT tags;
+                ) AS categorizedByTags,
+                (
+                    MATCH price > 10;
+
+                    BUCKET BY price
+                    BOUNDARIES [10, 150, 200, 300, 400]
+                    DEFAULT "Other"
+                    PROJECT SUM(1) AS count,
+                            PUSH(title) AS titles;
+                ) AS categorizedByPrice;
+                '''
+            )
+            == {
+                '$facet': {
+                    'categorizedByTags': [
+                        {'$unwind': {'path': '$tags'}},
+                        {'$sortByCount': '$tags'},
+                    ],
+                    'categorizedByPrice': [
+                        {'$match': {'$expr': {'$gt': ['$price', 10]}}},
+                        {
+                            '$bucket': {
+                                'groupBy': "$price",
+                                'boundaries': [10, 150, 200, 300, 400],
+                                'default': "Other",
+                                'output': {
+                                    'count': {'$sum': 1},
+                                    'titles': {'$push': '$title'},
+                                },
+                            }
+                        },
+                    ],
+                }
+            }
+        )
+        # facet with
+        # $collStats
+        # $facet
+        # $geoNear
+        # $indexStats
+        # $out
+        # $merge
+        # $planCacheStats
+        # Only OUT ane MERGE are eased (converted to EasyMQL) as of now.
+        # Should add tests for others once they are eased too.
+        with raises(ParseException):
+            Stages.parse('FACET (OUTPUT TO COLL author;) AS out;')
+        with raises(ParseException):
+            Stages.parse('FACET (MERGE INTO COLL mycoll;) AS merge;')
