@@ -633,3 +633,64 @@ class TestStages:
             Stages.parse('FACET (OUTPUT TO COLL author;) AS out;')
         with raises(ParseException):
             Stages.parse('FACET (MERGE INTO COLL mycoll;) AS merge;')
+        # FACET with UNION WITH
+        assert (
+            Stages.parse(
+                '''
+            FACET
+            (
+                UNWIND tags;
+                SORT BY COUNT tags;
+                UNION WITH users;
+            ) AS categorizedByTags;
+            '''
+            )
+            == {
+                '$facet': {
+                    'categorizedByTags': [
+                        {'$unwind': {'path': '$tags'}},
+                        {'$sortByCount': '$tags'},
+                        {'$unionWith': {'coll': 'users'}},
+                    ]
+                }
+            }
+        )
+
+    def test_stages(self):
+        # without coll
+        with raises(ParseException):
+            Stages.parse('UNION WITH ;')
+        # with coll
+        assert Stages.parse('UNION WITH suppliers;') == {
+            '$unionWith': {'coll': 'suppliers'}
+        }
+        # with coll but without pipeline
+        with raises(ParseException):
+            Stages.parse('UNION WITH suppliers WITH PIPELINE ();')
+        # with coll & pipeline (itself)
+        assert Stages.parse(
+            'UNION WITH suppliers WITH PIPELINE (UNION WITH warehouses;);'
+        ) == {
+            '$unionWith': {
+                'coll': 'suppliers',
+                'pipeline': [{'$unionWith': {'coll': 'warehouses'}}],
+            }
+        }
+        # with coll & multiple pipeline
+        assert Stages.parse(
+            'UNION WITH warehouses WITH PIPELINE (PROJECT +state, -_id;);'
+        ) == {
+            '$unionWith': {
+                'coll': 'warehouses',
+                'pipeline': [{'$project': {'_id': 0, 'state': 1}}],
+            }
+        }
+        # UNION WITH with $out and $merge
+        with raises(ParseException):
+            Stages.parse(
+                'UNION WITH warehouses WITH PIPELINE (OUTPUT TO COLL author;);'
+            )
+        with raises(ParseException):
+            Stages.parse(
+                'UNION WITH warehouses WITH PIPELINE (MERGE INTO COLL mycoll;);'
+            )

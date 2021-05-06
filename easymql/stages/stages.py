@@ -9,6 +9,7 @@ from easymql.expressions.others import FieldPath
 from easymql.keywords import *
 from easymql.stages.parts import *
 from easymql.utils import delimited_list
+from easymql.core import Forward
 
 
 class AddFields(Grammar):
@@ -357,26 +358,8 @@ class Facet(Grammar):
         """This should be updated with the new stages whenever get
         added that are supported in FACET"""
 
-        allowed_stages = (
-            AddFields
-            | BucketBy
-            | Count
-            | GroupBy
-            | Limit
-            | Lookup
-            | Match
-            | Project
-            | Redact
-            | ReplaceRoot
-            | ReplaceWith
-            | Sample
-            | Set
-            | Skip
-            | Sort
-            | SortByCount
-            | Unset
-            | Unwind
-        )
+        allowed_stages = Forward()
+
         grammar = LPAREN + allowed_stages[1, ...] + RPAREN + Suppress(AS) + Field
 
         @classmethod
@@ -389,6 +372,75 @@ class Facet(Grammar):
     @classmethod
     def action(cls, tokens):
         return {'$facet': reduce(lambda x, y: {**x, **y}, tokens[1:])}
+
+
+class UnionWith(Grammar):
+    """This should be updated with the new stages whenever get
+    added that are supported in UNION WITH"""
+
+    allowed_stages = Forward()
+
+    grammar = (
+        UNION
+        + WITH
+        + CollectionName
+        + Optional(WITH + PIPELINE + LPAREN + allowed_stages[1, ...] + RPAREN)
+        + SEMICOLON
+    )
+
+    allowed_stages <<= (
+        AddFields
+        | BucketBy
+        | Count
+        | Facet
+        | GroupBy
+        | Limit
+        | Lookup
+        | Match
+        | Project
+        | Redact
+        | ReplaceRoot
+        | ReplaceWith
+        | Sample
+        | Set
+        | Skip
+        | Sort
+        | SortByCount
+        | grammar
+        | Unset
+        | Unwind
+    )
+
+    @classmethod
+    def action(cls, tokens):
+        print(tokens)
+        doc = {'coll': tokens[2]}
+        if len(tokens) > 3:
+            doc['pipeline'] = tokens[5:]
+        return {'$unionWith': doc}
+
+
+Facet.NewPipeline.allowed_stages <<= (
+    AddFields
+    | BucketBy
+    | Count
+    | GroupBy
+    | Limit
+    | Lookup
+    | Match
+    | Project
+    | Redact
+    | ReplaceRoot
+    | ReplaceWith
+    | Sample
+    | Set
+    | Skip
+    | Sort
+    | SortByCount
+    | UnionWith
+    | Unset
+    | Unwind
+)
 
 
 Stages = (
@@ -411,6 +463,7 @@ Stages = (
     | Skip
     | Sort
     | SortByCount
+    | UnionWith
     | Unset
     | Unwind
 )
