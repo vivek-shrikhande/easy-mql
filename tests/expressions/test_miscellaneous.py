@@ -13,6 +13,6 @@ class TestMiscellaneousExpression:
         assert self.exp.parse('RANDOM()') == {'$rand': {}}
 
     def test_sample_rate(self):
-        assert self.exp.parse('SAMPLE_RATE(0.33)') == {'$sampleRate': [0.33]}
+        assert self.exp.parse('SAMPLE_RATE(0.33)') == {'$sampleRate': 0.33}
         with raises(ParseException):
             self.exp.parse('SAMPLE_RATE()')
