@@ -14,6 +14,7 @@ from pyparsing import (
     opAssoc as OpAssoc,  # noqa
     MatchFirst as PpMatchFirst,
     And as PpAnd,
+    pythonStyleComment,
 )
 
 from easymql import Adapter
@@ -140,3 +141,8 @@ class And(Adapter):
     def __init__(self, exprs, savelist=True):
         grammar = PpAnd([expr._grammar for expr in exprs], savelist)
         super(And, self).__init__(grammar)
+
+
+class HashComment(Adapter):
+    def __init__(self):
+        super(HashComment, self).__init__(pythonStyleComment)

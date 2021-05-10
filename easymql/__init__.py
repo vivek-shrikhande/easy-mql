@@ -72,6 +72,9 @@ class MetaGrammar(type):
     def _grammar(cls):
         return cls.grammar._grammar
 
+    def ignore(cls, expr):
+        return cls._grammar.ignore(expr)
+
 
 class Grammar(metaclass=MetaGrammar):
     def __init__(self, value):
@@ -192,3 +195,6 @@ class Adapter:
             return result.pop()
         else:
             return result
+
+    def ignore(self, expr):
+        return Adapter(self.grammar.ignore(expr._grammar))
