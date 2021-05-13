@@ -2,25 +2,7 @@ from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.core import Suppress
-from easymql.keywords import (
-    ARRAY_ELEM_AT,
-    ARRAY_TO_OBJECT,
-    CONCAT_ARRAYS,
-    FILTER,
-    FIRST,
-    IN,
-    INDEX_OF_ARRAY,
-    IS_ARRAY,
-    LAST,
-    MAP,
-    OBJECT_TO_ARRAY,
-    RANGE,
-    REDUCE,
-    REVERSE_ARRAY,
-    SIZE,
-    SLICE,
-    ZIP,
-)
+from easymql.identifiers import *
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 

@@ -1,29 +1,8 @@
 from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN, COMMA
-from easymql.core import Keyword, MatchFirst, Optional, Suppress
-from easymql.keywords import (
-    CONCAT,
-    INDEX_OF_BYTES,
-    INDEX_OF_CP,
-    TRIM,
-    LTRIM,
-    RTRIM,
-    REGEX_FIND,
-    REGEX_FIND_ALL,
-    REGEX_MATCH,
-    REPLACE,
-    REPLACE_ALL,
-    SPLIT,
-    STR_LEN_BYTES,
-    STR_LEN_CP,
-    STRCASECMP,
-    SUBSTR,
-    SUBSTR_BYTES,
-    SUBSTR_CP,
-    TO_LOWER,
-    TO_UPPER,
-)
+from easymql.core import Optional
+from easymql.identifiers import *
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 

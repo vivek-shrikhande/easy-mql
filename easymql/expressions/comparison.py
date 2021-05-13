@@ -1,7 +1,7 @@
 from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
-from easymql.keywords import CMP
+from easymql.identifiers import CMP
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 

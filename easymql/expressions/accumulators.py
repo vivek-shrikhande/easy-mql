@@ -1,7 +1,7 @@
 from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
-from easymql.keywords import AVG, MAX, MIN, STD_DEV_POP, STD_DEV_SAMP, SUM
+from easymql.identifiers import *
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 

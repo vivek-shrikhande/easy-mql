@@ -1,7 +1,7 @@
 from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
-from easymql.keywords import BINARY_SIZE, BSON_SIZE
+from easymql.identifiers import BINARY_SIZE, BSON_SIZE
 from easymql.proxies import expression_proxy
 
 
