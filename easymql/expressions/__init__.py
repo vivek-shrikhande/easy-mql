@@ -15,11 +15,13 @@ from easymql.expressions.set import SetExpression
 from easymql.expressions.trigonometry import TrigonometryExpression
 from easymql.expressions.type import TypeExpression
 from easymql.expressions.strings import StringExpression
+from easymql.expressions.systemvariables import SystemVariables
 from easymql.proxies import expression_proxy
 
 
 class FuncExpression(Grammar):
 
+    # Order matters. Especially FieldPath; it should be at the end.
     grammar = (
         DataType
         | AccumulatorExpression
@@ -36,6 +38,7 @@ class FuncExpression(Grammar):
         | TrigonometryExpression
         | TypeExpression
         | StringExpression
+        | SystemVariables
         | FieldPath
     )
 

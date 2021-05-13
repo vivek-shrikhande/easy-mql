@@ -57,3 +57,13 @@ WITH = Keyword('WITH')
 false = Keyword('false')
 null = Keyword('null')
 true = Keyword('true')
+
+# System variables
+SYS_CLUSTER_TIME = Keyword('$CLUSTER_TIME')
+SYS_CURRENT = Keyword('$CURRENT')
+SYS_DESCEND = Keyword('$DESCEND')
+SYS_KEEP = Keyword('$KEEP')
+SYS_NOW = Keyword('$NOW')
+SYS_PRUNE = Keyword('$PRUNE')
+SYS_REMOVE = Keyword('$REMOVE')
+SYS_ROOT = Keyword('$ROOT')
