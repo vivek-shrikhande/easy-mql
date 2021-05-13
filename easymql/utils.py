@@ -22,11 +22,7 @@ def delimited_list(expr, delimiter=Literal(','), min=2, max=...):
             return expr + (Suppress(delimiter) + expr)[min - 1, max - 1]
 
 
-def mongo_expression(name, tokens):
-    return {f'${name}': tokens.asList()}
-
-
-def cast_to_int(int_str):
+def safe_cast_int(int_str):
     try:
         return int(int_str)
     except Exception:
