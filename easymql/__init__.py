@@ -38,9 +38,6 @@ class MetaGrammar(type):
     def __rand__(cls, other):
         return cls.grammar.__rand__(other)
 
-    def __repr__(cls):
-        return f'<{cls.__name__}>'
-
     def __req__(cls, other):
         return cls.grammar.__req__(other)
 
@@ -58,9 +55,6 @@ class MetaGrammar(type):
 
     def __rxor__(cls, other):
         return cls.grammar.__rxor__(other)
-
-    def __str__(cls):
-        return cls.__name__
 
     def __sub__(cls, other):
         return cls.grammar.__sub__(other)
