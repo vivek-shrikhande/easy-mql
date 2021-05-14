@@ -1,9 +1,9 @@
-from easymql.meta import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.core import Optional, Suppress, White
-from easymql.keywords import CASE, WHEN, END, ELSE, THEN
 from easymql.identifiers import IF, IF_NULL
+from easymql.keywords import CASE, WHEN, END, ELSE, THEN
+from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 

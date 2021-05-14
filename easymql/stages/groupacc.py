@@ -1,8 +1,8 @@
-from easymql.meta import Grammar
 from easymql.actions import UnaryExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.expressions import Expression
 from easymql.identifiers import *
+from easymql.meta import Grammar
 
 
 class AddToSet(Grammar, UnaryExpressionAction):

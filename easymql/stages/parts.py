@@ -1,8 +1,7 @@
-from easymql.meta import Grammar
 from easymql.core import Suppress, Regex, Optional, QuotedString
-
 from easymql.expressions import Expression
 from easymql.keywords import DB, COLL, AS
+from easymql.meta import Grammar
 from easymql.stages.groupacc import GroupByAccumulatorExpression
 
 

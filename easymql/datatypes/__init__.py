@@ -1,6 +1,6 @@
-from easymql.meta import Grammar
 from easymql.datatypes.composite import Array, Object
 from easymql.datatypes.primary import Boolean, Date, Null, Number, String
+from easymql.meta import Grammar
 
 
 class DataType(Grammar):

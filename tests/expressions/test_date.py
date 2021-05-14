@@ -1,8 +1,9 @@
-from easymql.expressions import FuncExpression
-from easymql.datatypes.primary import Integer
-from pytest import raises
 from pyparsing import ParseException
+from pytest import raises
+
 from easymql.datatypes.primary import Date
+from easymql.datatypes.primary import Integer
+from easymql.expressions import FuncExpression
 
 
 class TestDateExpression:

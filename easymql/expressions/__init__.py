@@ -1,4 +1,3 @@
-from easymql.meta import Grammar
 from easymql.core import InfixExpression, OpAssoc, OneOf, Keyword
 from easymql.datatypes import DataType
 from easymql.expressions.accumulators import AccumulatorExpression
@@ -12,10 +11,11 @@ from easymql.expressions.miscellaneous import MiscellaneousExpression
 from easymql.expressions.object import MergeObjects, ObjectToArray
 from easymql.expressions.others import FieldPath
 from easymql.expressions.set import SetExpression
-from easymql.expressions.trigonometry import TrigonometryExpression
-from easymql.expressions.type import TypeExpression
 from easymql.expressions.strings import StringExpression
 from easymql.expressions.systemvariables import SystemVariables
+from easymql.expressions.trigonometry import TrigonometryExpression
+from easymql.expressions.type import TypeExpression
+from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
 
 

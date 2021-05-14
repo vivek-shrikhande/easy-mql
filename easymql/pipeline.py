@@ -1,6 +1,6 @@
 from easymql.core import HashComment
-from easymql.stages import Stages
 from easymql.datatypes.primary import PrimaryDataType
+from easymql.stages import Stages
 
 
 def encode(item):

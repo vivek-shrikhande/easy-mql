@@ -1,6 +1,7 @@
-from easymql.expressions import Expression as exp
 from pyparsing import ParseException
 from pytest import raises
+
+from easymql.expressions import Expression as exp
 
 
 class TestComparisonExpression:

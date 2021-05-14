@@ -1,8 +1,8 @@
 from functools import reduce
 
-from easymql.meta import Grammar
 from easymql.basics import *
 from easymql.core import QuotedString
+from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 

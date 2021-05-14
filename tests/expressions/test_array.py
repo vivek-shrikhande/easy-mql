@@ -2,7 +2,6 @@ from pyparsing import ParseException
 from pytest import raises
 
 from easymql.expressions import Expression
-from easymql.datatypes.primary import Integer, Boolean, String, Null
 
 
 class TestArrayExpression:

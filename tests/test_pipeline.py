@@ -1,5 +1,5 @@
-from easymql.pipeline import Pipeline, encode
 from easymql.datatypes.primary import *
+from easymql.pipeline import Pipeline, encode
 
 
 def test_encode():

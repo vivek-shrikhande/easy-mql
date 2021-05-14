@@ -1,4 +1,3 @@
-from easymql.meta import Grammar
 from easymql.keywords import (
     SYS_CLUSTER_TIME,
     SYS_CURRENT,
@@ -9,6 +8,7 @@ from easymql.keywords import (
     SYS_REMOVE,
     SYS_ROOT,
 )
+from easymql.meta import Grammar
 
 
 class SystemVariables(Grammar):

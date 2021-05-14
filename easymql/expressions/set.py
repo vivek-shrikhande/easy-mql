@@ -1,8 +1,8 @@
-from easymql.meta import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.datatypes.composite import Array
 from easymql.identifiers import *
+from easymql.meta import Grammar
 from easymql.utils import delimited_list
 
 
