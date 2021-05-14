@@ -156,18 +156,18 @@ class TestStringsExpression:
         with raises(ParseException):
             self.exp.parse('SPLIT("June-15-2013", "-", "1")')
 
-    def test_string_lenght(self):
+    def test_str_len_bytes(self):
         assert self.exp.parse('STR_LEN_BYTES("abcde")') == {'$strLenBytes': 'abcde'}
         with raises(ParseException):
             self.exp.parse('STR_LEN_BYTES("abcd", "efgh")')
 
-    def test_string_lenght_cp(self):
+    def test_str_len_cp(self):
         assert self.exp.parse('STR_LEN_CP("Easy mql")') == {'$strLenCP': 'Easy mql'}
         with raises(ParseException):
             self.exp.parse('STR_LEN_CP("abcd", "efgh")')
 
-    def test_string_case_comparison(self):
-        assert self.exp.parse('STRCASECMP("Easy", "easy")') == {
+    def test_str_case_cmp(self):
+        assert self.exp.parse('STR_CASE_CMP("Easy", "easy")') == {
             '$strcasecmp': ['Easy', 'easy']
         }
         with raises(ParseException):
