@@ -1,4 +1,4 @@
-from easymql import Grammar
+from easymql.meta import Grammar
 from easymql.basics import LPAREN, RPAREN, COMMA
 from easymql.core import Keyword, MatchFirst, Optional, Suppress
 from easymql.datatypes.primary import Null

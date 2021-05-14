@@ -1,6 +1,6 @@
 from pyparsing import pyparsing_common
 
-from easymql import Grammar, Adapter
+from easymql.meta import Grammar, Adapter
 from easymql.core import QuotedString, Regex
 from easymql.exc import DatePartOutOfRangeError
 from easymql.keywords import null, true, false

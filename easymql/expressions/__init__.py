@@ -1,4 +1,4 @@
-from easymql import Grammar
+from easymql.meta import Grammar
 from easymql.core import InfixExpression, OpAssoc, OneOf, Keyword
 from easymql.datatypes import DataType
 from easymql.expressions.accumulators import AccumulatorExpression

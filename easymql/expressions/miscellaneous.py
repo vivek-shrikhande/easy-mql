@@ -1,4 +1,4 @@
-from easymql import Grammar
+from easymql.meta import Grammar
 from easymql.actions import ExpressionAction, UnaryExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.datatypes.primary import Decimal

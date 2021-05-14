@@ -1,4 +1,4 @@
-from easymql import Grammar
+from easymql.meta import Grammar
 from easymql.core import Suppress, Regex, Optional, QuotedString
 
 from easymql.expressions import Expression

@@ -17,7 +17,7 @@ from pyparsing import (
     pythonStyleComment,
 )
 
-from easymql import Adapter
+from easymql.meta import Adapter
 
 
 class Keyword(Adapter):
