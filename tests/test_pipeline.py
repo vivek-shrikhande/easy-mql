@@ -21,54 +21,73 @@ def test_encode():
     assert encode(Integer(1)) == 1
     assert encode(Null(None)) is None
     assert encode(String("hello")) == "hello"
-    assert encode([
-        Integer(1),
-        Integer(2),
-        Integer(3),
-        Null(None),
-        [[]],
-        [Decimal(1.2)],
-        {},
-        {"a": []},
-        {"a": {"b": 2}},
-        {"a": 1},
-        2
-    ]) == [1, 2, 3, None, [[]], [1.2], {}, {'a': []}, {'a': {'b': 2}}, {'a': 1}, 2]
+    assert (
+        encode(
+            [
+                Integer(1),
+                Integer(2),
+                Integer(3),
+                Null(None),
+                [[]],
+                [Decimal(1.2)],
+                {},
+                {"a": []},
+                {"a": {"b": 2}},
+                {"a": 1},
+                2,
+            ]
+        )
+        == [1, 2, 3, None, [[]], [1.2], {}, {'a': []}, {'a': {'b': 2}}, {'a': 1}, 2]
+    )
 
 
 class TestPipeline:
     def test_comments(self):
         # Single line comment
-        assert Pipeline.parse(
-            '''
-            # filter by region
-            MATCH region = "West";
-            '''
-        ) == {'$match': {'$expr': {'$eq': ['$region', 'West']}}}
+        assert (
+            Pipeline.parse(
+                '''
+                # filter by region
+                MATCH region = "West";
+                '''
+            )
+            == {'$match': {'$expr': {'$eq': ['$region', 'West']}}}
+        )
         # Multiline line comment
-        assert Pipeline.parse(
-            '''
-            # filter
-            # by region
-            MATCH region = "West";
-            '''
-        ) == {'$match': {'$expr': {'$eq': ['$region', 'West']}}}
+        assert (
+            Pipeline.parse(
+                '''
+                # filter
+                # by region
+                MATCH region = "West";
+                '''
+            )
+            == {'$match': {'$expr': {'$eq': ['$region', 'West']}}}
+        )
         # Quick comments
-        assert Pipeline.parse(
-            '''
-            MATCH region = "West";  # filter by region
-            '''
-        ) == {'$match': {'$expr': {'$eq': ['$region', 'West']}}}
-        assert Pipeline.parse(
-            '''
-            MATCH price > 1000 +  # base price
-            18 / 100;  # tax
-            '''
-        ) == {
-            '$match': {
-                '$expr': {'$gt': ['$price', {'$add': [1000, {'$divide': [18, 100]}]}]}
+        assert (
+            Pipeline.parse(
+                '''
+                MATCH region = "West";  # filter by region
+                '''
+            )
+            == {'$match': {'$expr': {'$eq': ['$region', 'West']}}}
+        )
+        assert (
+            Pipeline.parse(
+                '''
+                MATCH price > 1000 +  # base price
+                18 / 100;  # tax
+                '''
+            )
+            == {
+                '$match': {
+                    '$expr': {
+                        '$gt': ['$price', {'$add': [1000, {'$divide': [18, 100]}]}]
+                    }
+                }
             }
-        }
+        )
         # All mixed
         assert Pipeline.parse(
             r'''
