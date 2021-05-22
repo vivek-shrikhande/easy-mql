@@ -34,4 +34,4 @@ class Object(Grammar):
         return reduce(lambda e1, e2: {**e1, **e2}, tokens) if tokens else {}
 
 
-Composite = Array | KeyValuePair | Object
+Composite = Array | Object
