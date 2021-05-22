@@ -1,20 +1,7 @@
-from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
-from easymql.keywords import (
-    SIN,
-    COS,
-    TAN,
-    ASIN,
-    ACOS,
-    ATAN,
-    ATAN2,
-    ASINH,
-    ACOSH,
-    ATANH,
-    DEGREES_TO_RADIANS,
-    RADIANS_TO_DEGREES,
-)
+from easymql.identifiers import *
+from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 

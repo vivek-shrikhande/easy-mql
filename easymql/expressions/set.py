@@ -1,16 +1,8 @@
-from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.datatypes.composite import Array
-from easymql.keywords import (
-    ALL_ELEMENTS_TRUE,
-    ANY_ELEMENT_TRUE,
-    SET_DIFFERENCE,
-    SET_EQUALS,
-    SET_UNION,
-    SET_INTERSECTION,
-    SET_IS_SUBSET,
-)
+from easymql.identifiers import *
+from easymql.meta import Grammar
 from easymql.utils import delimited_list
 
 

@@ -1,5 +1,5 @@
-from easymql import Grammar
 from easymql.core import QuotedString, Regex
+from easymql.meta import Grammar
 
 
 class FieldPath(Grammar):

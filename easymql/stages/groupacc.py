@@ -1,20 +1,8 @@
-from easymql import Grammar
 from easymql.actions import UnaryExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.expressions import Expression
-from easymql.keywords import (
-    ADD_TO_SET,
-    AVG,
-    FIRST,
-    LAST,
-    MAX,
-    MERGE_OBJECTS,
-    MIN,
-    PUSH,
-    STD_DEV_POP,
-    STD_DEV_SAMP,
-    SUM,
-)
+from easymql.identifiers import *
+from easymql.meta import Grammar
 
 
 class AddToSet(Grammar, UnaryExpressionAction):

@@ -1,7 +1,7 @@
-from easymql.core import Word
 from pyparsing import ParseException, alphas
 from pytest import raises
 
+from easymql.core import Word
 from easymql.utils import delimited_list, keyword_group
 
 

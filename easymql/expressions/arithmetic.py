@@ -1,24 +1,7 @@
-from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN
-from easymql.keywords import (
-    ABS,
-    ADD,
-    CEIL,
-    DIVIDE,
-    EXP,
-    FLOOR,
-    LN,
-    LOG,
-    LOG10,
-    MOD,
-    MULTIPLY,
-    POW,
-    ROUND,
-    SQRT,
-    SUBTRACT,
-    TRUNC,
-)
+from easymql.identifiers import *
+from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 

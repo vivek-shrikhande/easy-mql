@@ -1,29 +1,8 @@
-from easymql import Grammar
 from easymql.actions import ExpressionAction
 from easymql.basics import LPAREN, RPAREN, COMMA
-from easymql.core import Keyword, MatchFirst, Optional, Suppress
-from easymql.keywords import (
-    CONCAT,
-    INDEX_OF_BYTES,
-    INDEX_OF_CP,
-    TRIM,
-    LTRIM,
-    RTRIM,
-    REGEX_FIND,
-    REGEX_FIND_ALL,
-    REGEX_MATCH,
-    REPLACE,
-    REPLACE_ALL,
-    SPLIT,
-    STR_LEN_BYTES,
-    STR_LEN_CP,
-    STRCASECMP,
-    SUBSTR,
-    SUBSTR_BYTES,
-    SUBSTR_CP,
-    TO_LOWER,
-    TO_UPPER,
-)
+from easymql.core import Optional
+from easymql.identifiers import *
+from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 
@@ -157,7 +136,7 @@ class Split(Grammar, ExpressionAction):
     grammar = SPLIT + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
 
 
-class StringLenght(Grammar, ExpressionAction):
+class StrLenBytes(Grammar, ExpressionAction):
 
     grammar = STR_LEN_BYTES + LPAREN + expression_proxy + RPAREN
 
@@ -166,7 +145,7 @@ class StringLenght(Grammar, ExpressionAction):
         return {'$strLenBytes': tokens[1]}
 
 
-class StringLenghtCP(Grammar, ExpressionAction):
+class StrLenCP(Grammar, ExpressionAction):
 
     grammar = STR_LEN_CP + LPAREN + expression_proxy + RPAREN
 
@@ -175,11 +154,15 @@ class StringLenghtCP(Grammar, ExpressionAction):
         return {'$strLenCP': tokens[1]}
 
 
-class Strcasecmp(Grammar, ExpressionAction):
+class StrCaseCmp(Grammar, ExpressionAction):
 
     grammar = (
-        STRCASECMP + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
+        STR_CASE_CMP + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
     )
+
+    @classmethod
+    def action(cls, tokens):
+        return {'$strcasecmp': tokens[1:]}
 
 
 class Substr(Grammar, ExpressionAction):
@@ -205,12 +188,12 @@ class SubstrCP(Grammar, ExpressionAction):
         return {'$substrCP': tokens[1:]}
 
 
-class toLower(Grammar, ExpressionAction):
+class ToLower(Grammar, ExpressionAction):
 
     grammar = TO_LOWER + LPAREN + expression_proxy + RPAREN
 
 
-class toUpper(Grammar, ExpressionAction):
+class ToUpper(Grammar, ExpressionAction):
 
     grammar = TO_UPPER + LPAREN + expression_proxy + RPAREN
 
@@ -228,12 +211,12 @@ StringExpression = (
     | Replace
     | ReplaceAll
     | Split
-    | StringLenght
-    | StringLenghtCP
-    | Strcasecmp
+    | StrCaseCmp
+    | StrLenBytes
+    | StrLenCP
     | Substr
     | SubstrBytes
     | SubstrCP
-    | toLower
-    | toUpper
+    | ToLower
+    | ToUpper
 )

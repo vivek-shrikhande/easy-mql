@@ -1,8 +1,8 @@
 from pyparsing import ParseException
 from pytest import raises
 
-from easymql.expressions import Expression
 from easymql.datatypes.primary import Boolean, Decimal, Integer, Null, String
+from easymql.expressions import Expression
 
 
 class TestCompositeDataType:

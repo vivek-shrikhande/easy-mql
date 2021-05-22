@@ -1,8 +1,8 @@
-from easymql import Grammar
 from easymql.actions import ExpressionAction, UnaryExpressionAction
 from easymql.basics import LPAREN, RPAREN
 from easymql.datatypes.primary import Decimal
-from easymql.keywords import RANDOM, SAMPLE_RATE
+from easymql.identifiers import RANDOM, SAMPLE_RATE
+from easymql.meta import Grammar
 
 
 class Random(Grammar, ExpressionAction):

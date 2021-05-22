@@ -1,8 +1,8 @@
-from easymql import Grammar
 from easymql.basics import LPAREN, RPAREN, COMMA
 from easymql.core import Keyword, MatchFirst, Optional, Suppress
 from easymql.datatypes.primary import Null
-from easymql.keywords import DATE, ISO_WEEK_DATE, PARSE_DATE, FORMAT_DATE, EXTRACT
+from easymql.identifiers import DATE, ISO_WEEK_DATE, PARSE_DATE, FORMAT_DATE, EXTRACT
+from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
 from easymql.utils import delimited_list
 

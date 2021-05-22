@@ -3,13 +3,13 @@ from functools import reduce
 from pyparsing import ParseException
 
 from easymql.basics import *
-from easymql.datatypes.primary import Number, Boolean, String
+from easymql.core import Forward
 from easymql.datatypes.composite import Array
+from easymql.datatypes.primary import Number, Boolean, String
 from easymql.expressions.others import FieldPath
 from easymql.keywords import *
 from easymql.stages.parts import *
 from easymql.utils import delimited_list
-from easymql.core import Forward
 
 
 class AddFields(Grammar):

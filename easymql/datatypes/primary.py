@@ -1,13 +1,17 @@
 from pyparsing import pyparsing_common
 
-from easymql import Grammar, Adapter
 from easymql.core import QuotedString, Regex
 from easymql.exc import DatePartOutOfRangeError
 from easymql.keywords import null, true, false
-from easymql.utils import cast_to_int
+from easymql.meta import Grammar, Adapter
+from easymql.utils import safe_cast_int
 
 
-class Null(Grammar):
+class PrimaryDataType(Grammar):
+    pass
+
+
+class Null(PrimaryDataType):
 
     grammar = null
 
@@ -21,7 +25,7 @@ class Null(Grammar):
         return True
 
 
-class String(Grammar):
+class String(PrimaryDataType):
 
     grammar = QuotedString(quoteChar='"', escChar='\\', multiline=True)
 
@@ -35,7 +39,7 @@ class String(Grammar):
         return True
 
 
-class Boolean(Grammar):
+class Boolean(PrimaryDataType):
 
     grammar = true | false
 
@@ -49,7 +53,7 @@ class Boolean(Grammar):
         return True
 
 
-class Number(Grammar):
+class Number(PrimaryDataType):
     pass
 
 
@@ -84,7 +88,7 @@ class Decimal(Number):
 Number.grammar = Decimal | Integer
 
 
-class Date(Grammar):
+class Date(PrimaryDataType):
 
     grammar = Regex(
         r'D"(?P<year>\d{4})(-(?P<month>\d{2})(-(?P<day>\d{2}))?)?'
@@ -184,7 +188,7 @@ class Date(Grammar):
     @classmethod
     def action(cls, tokens):
         kwargs = {
-            p: cast_to_int(tokens[p])
+            p: safe_cast_int(tokens[p])
             for p in ['year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond']
             if tokens[p] is not None
         }

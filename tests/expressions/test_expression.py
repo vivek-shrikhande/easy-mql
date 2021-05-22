@@ -1,6 +1,7 @@
-from easymql.expressions import Expression as exp
-from pytest import raises
 from pyparsing import ParseException
+from pytest import raises
+
+from easymql.expressions import Expression as exp
 
 
 class TestInfixExpression:
