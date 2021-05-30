@@ -64,10 +64,28 @@ class MetaGrammar(type):
 
     @property
     def _grammar(cls):
+        """Return pyparsing grammar contained in this class travelling
+        from MetaGrammar --> Grammar --> Adapter --> PyParsing
+        """
         return cls.grammar._grammar
 
     def ignore(cls, expr):
         return cls._grammar.ignore(expr)
+
+    def _set_parse_action(cls, action):
+        try:
+            cls.grammar._set_parse_action(action)
+        except AttributeError:
+            pass
+
+    def parse(cls, string, explode=True):
+        return cls.grammar.parse(string, explode)
+
+    def _set_name(cls, name):
+        try:
+            cls.grammar._set_name(name)
+        except AttributeError:
+            pass
 
 
 class Grammar(metaclass=MetaGrammar):
@@ -82,113 +100,3 @@ class Grammar(metaclass=MetaGrammar):
 
     def __ne__(self, other):
         return not self == other
-
-    @classmethod
-    def parse(cls, string, explode=True):
-        return cls.grammar.parse(string, explode)
-
-    @classmethod
-    def _set_parse_action(cls, action):
-        try:
-            cls.grammar._set_parse_action(action)
-        except AttributeError:
-            pass
-
-    @classmethod
-    def _set_name(cls, name):
-        try:
-            cls.grammar._set_name(name)
-        except AttributeError:
-            pass
-
-
-class Adapter:
-    def __init__(self, grammar):
-        self.grammar = grammar
-        try:
-            self._set_parse_action(self.action)
-        except AttributeError as e:
-            pass
-
-    def _set_parse_action(self, action):
-        try:
-            self.grammar.setParseAction(action)
-        except AttributeError as e:
-            pass
-
-    def _set_name(self, name):
-        try:
-            self.grammar.setName(name)
-        except AttributeError as e:
-            pass
-
-    def __add__(self, other):
-        return Adapter(self.grammar.__add__(other._grammar))
-
-    def __and__(self, other):
-        return Adapter(self.grammar.__and__(other._grammar))
-
-    def __eq__(self, other):
-        return Adapter(self.grammar.__eq__(other._grammar))
-
-    def __getitem__(self, key):
-        return Adapter(self.grammar[key])
-
-    def __mul__(self, other):
-        return Adapter(self.grammar.__mul__(other._grammar))
-
-    def __ne__(self, other):
-        return Adapter(self.grammar.__ne__(other._grammar))
-
-    def __or__(self, other):
-        return Adapter(self.grammar.__or__(other._grammar))
-
-    def __radd__(self, other):
-        return Adapter(self.grammar.__radd__(other._grammar))
-
-    def __rand__(self, other):
-        return Adapter(self.grammar.__rand__(other._grammar))
-
-    # def __repr__(self):
-    #     return f'{self.__class__.__name__}({self.value})'
-
-    def __req__(self, other):
-        return Adapter(self.grammar.__req__(other._grammar))
-
-    def __rmul__(self, other):
-        return Adapter(self.grammar.__rmul__(other._grammar))
-
-    def __rne__(self, other):
-        return Adapter(self.grammar.__rne__(other._grammar))
-
-    def __ror__(self, other):
-        return Adapter(self.grammar.__ror__(other._grammar))
-
-    def __rsub__(self, other):
-        return Adapter(self.grammar.__rsub__(other._grammar))
-
-    def __rxor__(self, other):
-        return Adapter(self.grammar.__rxor__(other._grammar))
-
-    # def __str__(self):
-    #     return self.__class__.__name__
-
-    def __sub__(self, other):
-        return Adapter(self.grammar.__sub__(other._grammar))
-
-    def __xor__(self, other):
-        return Adapter(self.grammar.__xor__(other._grammar))
-
-    @property
-    def _grammar(self):
-        return self.grammar
-
-    def parse(self, string, explode=True):
-        result = self.grammar.parseString(string, parseAll=True).asList()
-        if explode and len(result) == 1:
-            return result.pop()
-        else:
-            return result
-
-    def ignore(self, expr):
-        return Adapter(self.grammar.ignore(expr._grammar))
