@@ -15,9 +15,90 @@ from pyparsing import (
     MatchFirst as PpMatchFirst,
     And as PpAnd,
     pythonStyleComment,
+    pyparsing_common,
 )
 
-from easymql.meta import Adapter
+
+class Adapter:
+    def __init__(self, grammar):
+        self.grammar = grammar
+        try:
+            self._set_parse_action(self.action)
+        except AttributeError:
+            pass
+
+    def _set_parse_action(self, action):
+        try:
+            self.grammar.setParseAction(action)
+        except AttributeError:
+            pass
+
+    def _set_name(self, name):
+        try:
+            self.grammar.setName(name)
+        except AttributeError:
+            pass
+
+    def __add__(self, other):
+        return And([self, other])
+
+    def __radd__(self, other):
+        # return Adapter(self.grammar.__radd__(other._grammar))
+        return other + self
+
+    def __sub__(self, other):
+        return Adapter(self.grammar.__sub__(other._grammar))
+
+    def __rsub__(self, other):
+        return other - self
+
+    def __eq__(self, other):
+        return self.grammar.__eq__(other._grammar)
+
+    def __req__(self, other):
+        return self == other
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __rne__(self, other):
+        return not (self == other)
+
+    def __getitem__(self, key):
+        return Adapter(self.grammar[key])
+
+    def __mul__(self, other):
+        return Adapter(self.grammar.__mul__(other._grammar))
+
+    def __rmul__(self, other):
+        return self.__mul__(other)
+
+    def __or__(self, other):
+        return MatchFirst([self, other])
+
+    def __ror__(self, other):
+        return other | self
+
+    # def __repr__(self):
+    #     return f'{self.__class__.__name__}({self.value})'
+
+    # def __str__(self):
+    #     return self.__class__.__name__
+
+    @property
+    def _grammar(self):
+        """Return PyParsing grammar contained in this instance."""
+        return self.grammar
+
+    def parse(self, string, explode=True):
+        result = self.grammar.parseString(string, parseAll=True).asList()
+        if explode and len(result) == 1:
+            return result.pop()
+        else:
+            return result
+
+    def ignore(self, expr):
+        return Adapter(self.grammar.ignore(expr._grammar))
 
 
 class Keyword(Adapter):
@@ -146,3 +227,8 @@ class And(Adapter):
 class HashComment(Adapter):
     def __init__(self):
         super(HashComment, self).__init__(pythonStyleComment)
+
+
+sci_real = Adapter(pyparsing_common.sci_real)
+real = Adapter(pyparsing_common.real)
+signed_integer = Adapter(pyparsing_common.signed_integer)

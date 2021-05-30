@@ -1,9 +1,7 @@
-from pyparsing import pyparsing_common
-
-from easymql.core import QuotedString, Regex
+from easymql.core import QuotedString, Regex, sci_real, real, signed_integer
 from easymql.exc import DatePartOutOfRangeError
 from easymql.keywords import null, true, false
-from easymql.meta import Grammar, Adapter
+from easymql.meta import Grammar
 from easymql.utils import safe_cast_int
 
 
@@ -59,7 +57,7 @@ class Number(PrimaryDataType):
 
 class Integer(Number):
 
-    grammar = Adapter(pyparsing_common.signed_integer)
+    grammar = signed_integer
 
     @classmethod
     def action(cls, token):
@@ -73,7 +71,7 @@ class Integer(Number):
 
 class Decimal(Number):
 
-    grammar = Adapter(pyparsing_common.sci_real | pyparsing_common.real)
+    grammar = sci_real | real
 
     @classmethod
     def action(cls, token):
