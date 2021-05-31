@@ -20,7 +20,7 @@ class EasyMQLSyntaxError(EasyMQLError):
             [
                 line
                 for no, line in enumerate(self.qstr.splitlines())
-                if no <= self.line_no
+                if no < self.line_no
             ]
         )
         marker_padding = ' ' * (self.col - 1)
