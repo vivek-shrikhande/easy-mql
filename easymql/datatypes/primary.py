@@ -24,7 +24,7 @@ class Null(PrimaryDataType):
 
 
 class String(PrimaryDataType):
-
+    name = 'string'
     grammar = QuotedString(quoteChar='"', escChar='\\', multiline=True)
 
     @classmethod
@@ -51,12 +51,8 @@ class Boolean(PrimaryDataType):
         return True
 
 
-class Number(PrimaryDataType):
-    pass
-
-
-class Integer(Number):
-
+class Integer(PrimaryDataType):
+    name = 'integer'
     grammar = signed_integer
 
     @classmethod
@@ -69,8 +65,8 @@ class Integer(Number):
         return True
 
 
-class Decimal(Number):
-
+class Decimal(PrimaryDataType):
+    name = 'decimal'
     grammar = sci_real | real
 
     @classmethod
@@ -83,7 +79,9 @@ class Decimal(Number):
         return True
 
 
-Number.grammar = Decimal | Integer
+class Number(PrimaryDataType):
+    name = 'number'
+    grammar = Decimal | Integer
 
 
 class Date(PrimaryDataType):

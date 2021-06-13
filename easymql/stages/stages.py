@@ -5,7 +5,7 @@ from pyparsing import ParseException
 from easymql.basics import *
 from easymql.core import Forward
 from easymql.datatypes.composite import Array
-from easymql.datatypes.primary import Number, Boolean, String
+from easymql.datatypes.primary import Integer, Boolean, String
 from easymql.expressions.others import FieldPath
 from easymql.keywords import *
 from easymql.stages.parts import *
@@ -86,7 +86,7 @@ class GroupBy(Grammar):
 
 class Limit(Grammar):
 
-    grammar = Suppress(LIMIT) + Number + SEMICOLON
+    grammar = Suppress(LIMIT) + Integer + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -190,7 +190,7 @@ class ReplaceWith(Grammar):
 
 class Sample(Grammar):
 
-    grammar = Suppress(SAMPLE) + Number + SEMICOLON
+    grammar = Suppress(SAMPLE) + Integer + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -211,7 +211,7 @@ class Set(Grammar):
 
 class Skip(Grammar):
 
-    grammar = Suppress(SKIP | OFFSET) + Number + SEMICOLON
+    grammar = Suppress(SKIP | OFFSET) + Integer + SEMICOLON
 
     @classmethod
     def action(cls, tokens):

@@ -6,17 +6,17 @@ from easymql.stages.groupacc import GroupByAccumulatorExpression
 
 
 class CollectionName(Grammar):
-
+    name = 'collection_name'
     grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'[\w.]+')
 
 
 class DbName(Grammar):
-
+    name = 'db_name'
     grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'\w+')
 
 
 class DbCollectionPath(Grammar):
-
+    name = 'collection_path'
     grammar = Optional(DB + DbName) + COLL + CollectionName
 
     @classmethod
@@ -28,7 +28,7 @@ class DbCollectionPath(Grammar):
 
 
 class Field(Grammar):
-
+    name = 'field'
     grammar = QuotedString(quoteChar="'", escChar='\\') | Regex(r'[\w.]+')
 
 
