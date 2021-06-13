@@ -9,12 +9,12 @@ from easymql.datatypes.primary import Number, Boolean, String
 from easymql.expressions.others import FieldPath
 from easymql.keywords import *
 from easymql.stages.parts import *
-from easymql.utils import delimited_list
+from easymql.utils import DelimitedList
 
 
 class AddFields(Grammar):
 
-    grammar = Suppress(ADD + FIELDS) + delimited_list(Alias, min=1) + SEMICOLON
+    grammar = Suppress(ADD + FIELDS) + DelimitedList(Alias, min=1) + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -33,7 +33,7 @@ class BucketBy(Grammar):
             return {'default': tokens[-1]}
 
     class Output(Grammar):
-        grammar = PROJECT + delimited_list(ProjectAccumulator, min=1)
+        grammar = PROJECT + DelimitedList(ProjectAccumulator, min=1)
 
         @classmethod
         def action(cls, tokens):
@@ -73,7 +73,7 @@ class GroupBy(Grammar):
         GROUP
         + BY
         + Expression
-        + Optional(PROJECT + delimited_list(ProjectAccumulator, min=1))
+        + Optional(PROJECT + DelimitedList(ProjectAccumulator, min=1))
         + SEMICOLON
     )
 
@@ -156,7 +156,7 @@ class Project(Grammar):
 
     # order matters
     element = NewField | ExcludeOrInclude
-    grammar = Suppress(PROJECT) + delimited_list(element, min=1) + SEMICOLON
+    grammar = Suppress(PROJECT) + DelimitedList(element, min=1) + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -199,7 +199,7 @@ class Sample(Grammar):
 
 class Set(Grammar):
 
-    grammar = Suppress(SET) + delimited_list(Alias, min=1) + SEMICOLON
+    grammar = Suppress(SET) + DelimitedList(Alias, min=1) + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -233,7 +233,7 @@ class Sort(Grammar):
     grammar = (
         Suppress(SORT | ORDER)
         + Suppress(BY)
-        + delimited_list(PairBySort, min=1)
+        + DelimitedList(PairBySort, min=1)
         + SEMICOLON
     )
 
@@ -256,7 +256,7 @@ class SortByCount(Grammar):
 
 class Unset(Grammar):
 
-    grammar = Suppress(UNSET) + delimited_list(Field, min=1) + SEMICOLON
+    grammar = Suppress(UNSET) + DelimitedList(Field, min=1) + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -299,7 +299,7 @@ class Unwind(Grammar):
 
 class Merge(Grammar):
     class On(Grammar):
-        grammar = ON + delimited_list(Field, min=1)
+        grammar = ON + DelimitedList(Field, min=1)
 
         @classmethod
         def action(cls, tokens):
@@ -359,6 +359,7 @@ class Facet(Grammar):
         added that are supported in FACET"""
 
         allowed_stages = Forward()
+        allowed_stages.set_name('pipeline')
 
         grammar = LPAREN + allowed_stages[1, ...] + RPAREN + Suppress(AS) + Field
 
@@ -367,7 +368,7 @@ class Facet(Grammar):
             print(tokens)
             return {tokens[-1]: tokens[0:-1]}
 
-    grammar = FACET + delimited_list(NewPipeline, min=1) + SEMICOLON
+    grammar = FACET + DelimitedList(NewPipeline, min=1) + SEMICOLON
 
     @classmethod
     def action(cls, tokens):
@@ -379,6 +380,7 @@ class UnionWith(Grammar):
     added that are supported in UNION WITH"""
 
     allowed_stages = Forward()
+    allowed_stages.set_name('pipeline')
 
     grammar = (
         UNION

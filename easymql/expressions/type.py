@@ -3,12 +3,12 @@ from easymql.basics import LPAREN, RPAREN
 from easymql.identifiers import *
 from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
-from easymql.utils import delimited_list
+from easymql.utils import DelimitedList
 
 
 class Convert(Grammar):
 
-    grammar = CONVERT + LPAREN + delimited_list(expression_proxy, min=2, max=4) + RPAREN
+    grammar = CONVERT + LPAREN + DelimitedList(expression_proxy, min=2, max=4) + RPAREN
 
     @classmethod
     def action(cls, tokens):

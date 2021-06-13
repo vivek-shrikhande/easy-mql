@@ -26,6 +26,10 @@ class Adapter:
             self._set_parse_action(self.action)
         except AttributeError:
             pass
+        try:
+            self.set_name(str(self))
+        except AttributeError:
+            pass
 
     def _set_parse_action(self, action):
         try:
@@ -33,11 +37,8 @@ class Adapter:
         except AttributeError:
             pass
 
-    def _set_name(self, name):
-        try:
-            self.grammar.setName(name)
-        except AttributeError:
-            pass
+    def set_name(self, name):
+        self.grammar.setName(name)
 
     def __add__(self, other):
         return And([self, other])
@@ -65,7 +66,7 @@ class Adapter:
         return not (self == other)
 
     def __getitem__(self, key):
-        return Adapter(self.grammar[key])
+        return MultipleMatch(self, key)
 
     def __mul__(self, other):
         return Adapter(self.grammar.__mul__(other._grammar))
@@ -82,13 +83,16 @@ class Adapter:
     # def __repr__(self):
     #     return f'{self.__class__.__name__}({self.value})'
 
-    # def __str__(self):
-    #     return self.__class__.__name__
+    def __str__(self):
+        return str(self.grammar)
 
     @property
     def _grammar(self):
         """Return PyParsing grammar contained in this instance."""
         return self.grammar
+
+    def get_adapter_grammar(self):
+        return self
 
     def parse(self, string, explode=True):
         result = self.grammar.parseString(string, parseAll=True).asList()
@@ -103,8 +107,11 @@ class Adapter:
 
 class Keyword(Adapter):
     def __init__(self, match_string):
-        grammar = PpKeyword(match_string)
-        super(Keyword, self).__init__(grammar)
+        self.match_string = match_string
+        super(Keyword, self).__init__(PpKeyword(match_string))
+
+    def __str__(self):
+        return self.match_string
 
 
 class Word(Adapter):
@@ -124,8 +131,11 @@ class Word(Adapter):
 
 class Suppress(Adapter):
     def __init__(self, expr):
-        grammar = PpSuppress(expr._grammar)
-        super(Suppress, self).__init__(grammar)
+        self.expr = expr
+        super(Suppress, self).__init__(PpSuppress(expr._grammar))
+
+    def __str__(self):
+        return str(self.expr)
 
 
 class QuotedString(Adapter):
@@ -176,12 +186,20 @@ class Empty(Adapter):
 
 class Literal(Adapter):
     def __init__(self, match_string):
+        self.match_string = match_string
         super(Literal, self).__init__(PpLiteral(match_string))
+
+    def __str__(self):
+        return self.match_string
 
 
 class Optional(Adapter):
     def __init__(self, expr):
+        self.expr = expr
         super(Optional, self).__init__(PpOptional(expr._grammar))
+
+    def __str__(self):
+        return f'[ {self.expr._grammar} ]'
 
 
 class White(Adapter):
@@ -212,21 +230,64 @@ class InfixExpression(Adapter):
         )
 
 
-class MatchFirst(Adapter):
+class ParseExpression(Adapter):
+    pass
+
+
+class MatchFirst(ParseExpression):
     def __init__(self, exprs, savelist=False):
+        self.exprs = exprs
         grammar = PpMatchFirst([expr._grammar for expr in exprs], savelist)
         super(MatchFirst, self).__init__(grammar)
 
+    def _get_elements(self):
+        """Flatten the nested MatchFirst objects and return as a list.
 
-class And(Adapter):
+        { { A | B } | C } will become { A | B | C }.
+        """
+        res = []
+        for expr in self.exprs:
+            if isinstance(expr, MatchFirst):
+                res += expr._get_elements()
+            else:
+                res.append(expr)
+        return res
+
+    def __str__(self):
+        return '{ ' + ' | '.join(str(e._grammar) for e in self._get_elements()) + ' }'
+
+
+class And(ParseExpression):
     def __init__(self, exprs, savelist=True):
+        self.exprs = exprs
         grammar = PpAnd([expr._grammar for expr in exprs], savelist)
         super(And, self).__init__(grammar)
+
+    def __str__(self):
+        return ' '.join(str(e._grammar) for e in self.exprs)
 
 
 class HashComment(Adapter):
     def __init__(self):
         super(HashComment, self).__init__(pythonStyleComment)
+
+
+class MultipleMatch(Adapter):
+    """Unlike others, this class does not use any specific PyParsing class.
+
+    self.grammar here can be pyparsing.OneOrMore or pyparsing.ZeroOrMore.
+    This class is created to override str behaviour of those classes.
+    """
+
+    def __init__(self, expr, key):
+        self.expr = expr
+        super(MultipleMatch, self).__init__(expr.grammar[key])
+
+    def __str__(self):
+        if isinstance(self.expr.get_adapter_grammar(), And):
+            return f'{{ {self.expr._grammar} }}...'
+        else:
+            return f'{self.expr._grammar}...'
 
 
 sci_real = Adapter(pyparsing_common.sci_real)

@@ -10,6 +10,10 @@ class MetaGrammar(type):
             cls._set_parse_action(cls.action)
         except AttributeError as e:
             pass
+        try:
+            cls.set_name(cls.name)
+        except AttributeError as e:
+            pass
 
     def __add__(cls, other):
         return cls.grammar.__add__(other)
@@ -62,6 +66,9 @@ class MetaGrammar(type):
     def __xor__(cls, other):
         return cls.grammar.__xor__(other)
 
+    def get_adapter_grammar(cls):
+        return cls.grammar.get_adapter_grammar()
+
     @property
     def _grammar(cls):
         """Return pyparsing grammar contained in this class travelling
@@ -81,9 +88,9 @@ class MetaGrammar(type):
     def parse(cls, string, explode=True):
         return cls.grammar.parse(string, explode)
 
-    def _set_name(cls, name):
+    def set_name(cls, name):
         try:
-            cls.grammar._set_name(name)
+            cls.grammar.set_name(name)
         except AttributeError:
             pass
 
