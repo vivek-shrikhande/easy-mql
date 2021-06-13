@@ -60,16 +60,19 @@ class Sum(Grammar, UnaryExpressionAction):
     grammar = SUM + LPAREN + Expression + RPAREN
 
 
-GroupByAccumulatorExpression = (
-    AddToSet
-    | Avg
-    | First
-    | Last
-    | Max
-    | MergeObjects
-    | Min
-    | Push
-    | StdDevPop
-    | StdDevSamp
-    | Sum
-)
+class AccumulatorExpression(Grammar):
+
+    name = 'accumulator_expression'
+    grammar = (
+        AddToSet
+        | Avg
+        | First
+        | Last
+        | Max
+        | MergeObjects
+        | Min
+        | Push
+        | StdDevPop
+        | StdDevSamp
+        | Sum
+    )

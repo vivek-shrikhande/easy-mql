@@ -1,13 +1,13 @@
 from pyparsing import ParseException
 from pytest import raises
 
-from easymql.stages.groupacc import GroupByAccumulatorExpression
+from easymql.stages.groupacc import AccumulatorExpression
 
 
 class TestGroupByAccumulatorsExpression:
     @classmethod
     def setup_class(cls):
-        cls.exp = GroupByAccumulatorExpression
+        cls.exp = AccumulatorExpression
 
     def test_add_to_set(self):
         assert self.exp.parse('ADD_TO_SET("price")') == {"$addToSet": "price"}
