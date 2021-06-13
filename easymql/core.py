@@ -91,6 +91,9 @@ class Adapter:
         """Return PyParsing grammar contained in this instance."""
         return self.grammar
 
+    def get_adapter_grammar(self):
+        return self
+
     def parse(self, string, explode=True):
         result = self.grammar.parseString(string, parseAll=True).asList()
         if explode and len(result) == 1:
@@ -223,7 +226,11 @@ class InfixExpression(Adapter):
         )
 
 
-class MatchFirst(Adapter):
+class ParseExpression(Adapter):
+    pass
+
+
+class MatchFirst(ParseExpression):
     def __init__(self, exprs, savelist=False):
         self.exprs = exprs
         grammar = PpMatchFirst([expr._grammar for expr in exprs], savelist)
@@ -246,7 +253,7 @@ class MatchFirst(Adapter):
         return '{ ' + ' | '.join(str(e._grammar) for e in self._get_elements()) + ' }'
 
 
-class And(Adapter):
+class And(ParseExpression):
     def __init__(self, exprs, savelist=True):
         self.exprs = exprs
         grammar = PpAnd([expr._grammar for expr in exprs], savelist)

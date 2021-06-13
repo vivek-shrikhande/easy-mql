@@ -2,18 +2,18 @@ from pyparsing import ParseException, alphas
 from pytest import raises
 
 from easymql.core import Word
-from easymql.utils import delimited_list, keyword_group
+from easymql.utils import DelimitedList, keyword_group
 
 
 class TestDelimitedList:
     def test_min_0_max_0(self):
-        dlist = delimited_list(Word(alphas), min=0, max=0)
+        dlist = DelimitedList(Word(alphas), min=0, max=0)
         assert dlist.parse('') == []
         with raises(ParseException):
             assert dlist.parse('a') == 'a'
 
     def test_min_0_max_2(self):
-        dlist = delimited_list(Word(alphas), min=0, max=2)
+        dlist = DelimitedList(Word(alphas), min=0, max=2)
         assert dlist.parse('') == []
         assert dlist.parse('a') == 'a'
         assert dlist.parse('a, b') == ['a', 'b']
@@ -25,7 +25,7 @@ class TestDelimitedList:
             ]
 
     def test_min_2_max_4(self):
-        dlist = delimited_list(Word(alphas), min=2, max=4)
+        dlist = DelimitedList(Word(alphas), min=2, max=4)
         with raises(ParseException):
             assert dlist.parse('') == []
         with raises(ParseException):
@@ -43,7 +43,7 @@ class TestDelimitedList:
             ]
 
     def test_min_2_max_ellipsis(self):
-        dlist = delimited_list(Word(alphas), min=2)
+        dlist = DelimitedList(Word(alphas), min=2)
         with raises(ParseException):
             assert dlist.parse('') == []
         with raises(ParseException):
@@ -60,7 +60,7 @@ class TestDelimitedList:
         ]
 
     def test_min_1_max_1(self):
-        dlist = delimited_list(Word(alphas), min=1, max=1)
+        dlist = DelimitedList(Word(alphas), min=1, max=1)
         with raises(ParseException):
             assert dlist.parse('') == []
         assert dlist.parse('a') == 'a'
@@ -74,7 +74,7 @@ class TestDelimitedList:
             ]
 
     def test_min_1_max_ellipses(self):
-        dlist = delimited_list(Word(alphas), min=1)
+        dlist = DelimitedList(Word(alphas), min=1)
         with raises(ParseException):
             assert dlist.parse('') == []
         assert dlist.parse('a') == 'a'
@@ -86,7 +86,7 @@ class TestDelimitedList:
         ]
 
     def test_min_2_max_2(self):
-        dlist = delimited_list(Word(alphas), min=2, max=2)
+        dlist = DelimitedList(Word(alphas), min=2, max=2)
         with raises(ParseException):
             assert dlist.parse('') == []
         with raises(ParseException):
@@ -101,10 +101,10 @@ class TestDelimitedList:
 
     def test_min_ellipsis(self):
         with raises(ValueError):
-            delimited_list(Word(alphas), min=...)
+            DelimitedList(Word(alphas), min=...)
 
     def test_default(self):
-        dlist = delimited_list(Word(alphas))
+        dlist = DelimitedList(Word(alphas))
         with raises(ParseException):
             assert dlist.parse('') == []
         with raises(ParseException):

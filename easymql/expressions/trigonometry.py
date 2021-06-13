@@ -3,7 +3,7 @@ from easymql.basics import LPAREN, RPAREN
 from easymql.identifiers import *
 from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
-from easymql.utils import delimited_list
+from easymql.utils import DelimitedList
 
 
 class Sin(Grammar, ExpressionAction):
@@ -38,7 +38,7 @@ class Atan(Grammar, ExpressionAction):
 
 class Atan2(Grammar, ExpressionAction):
 
-    grammar = ATAN2 + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
+    grammar = ATAN2 + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
 
 
 class Asinh(Grammar, ExpressionAction):

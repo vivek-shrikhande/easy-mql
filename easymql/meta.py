@@ -15,7 +15,6 @@ class MetaGrammar(type):
         except AttributeError as e:
             pass
 
-
     def __add__(cls, other):
         return cls.grammar.__add__(other)
 
@@ -66,6 +65,9 @@ class MetaGrammar(type):
 
     def __xor__(cls, other):
         return cls.grammar.__xor__(other)
+
+    def get_adapter_grammar(cls):
+        return cls.grammar.get_adapter_grammar()
 
     @property
     def _grammar(cls):

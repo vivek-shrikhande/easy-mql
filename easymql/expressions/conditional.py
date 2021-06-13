@@ -5,13 +5,13 @@ from easymql.identifiers import IF, IF_NULL
 from easymql.keywords import CASE, WHEN, END, ELSE, THEN
 from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
-from easymql.utils import delimited_list
+from easymql.utils import DelimitedList
 
 
 class Cond(Grammar):
 
     grammar = (
-        Suppress(IF) + LPAREN + delimited_list(expression_proxy, min=3, max=3) + RPAREN
+        Suppress(IF) + LPAREN + DelimitedList(expression_proxy, min=3, max=3) + RPAREN
     )
 
     @staticmethod
@@ -21,14 +21,14 @@ class Cond(Grammar):
 
 class IfNull(Grammar, ExpressionAction):
 
-    grammar = IF_NULL + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
+    grammar = IF_NULL + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
 
 
 class Case(Grammar):
 
     grammar = (
         Suppress(CASE)
-        + delimited_list(
+        + DelimitedList(
             Suppress(WHEN) + expression_proxy + Suppress(THEN) + expression_proxy,
             delimiter=White(),
             min=1,

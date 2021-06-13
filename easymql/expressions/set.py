@@ -3,7 +3,7 @@ from easymql.basics import LPAREN, RPAREN
 from easymql.datatypes.composite import Array
 from easymql.identifiers import *
 from easymql.meta import Grammar
-from easymql.utils import delimited_list
+from easymql.utils import DelimitedList
 
 
 class AllElementsTrue(Grammar, ExpressionAction):
@@ -18,27 +18,27 @@ class AnyElementTrue(Grammar, ExpressionAction):
 
 class SetDifference(Grammar, ExpressionAction):
 
-    grammar = SET_DIFFERENCE + LPAREN + delimited_list(Array, min=2, max=2) + RPAREN
+    grammar = SET_DIFFERENCE + LPAREN + DelimitedList(Array, min=2, max=2) + RPAREN
 
 
 class SetEquals(Grammar, ExpressionAction):
 
-    grammar = SET_EQUALS + LPAREN + delimited_list(Array) + RPAREN
+    grammar = SET_EQUALS + LPAREN + DelimitedList(Array) + RPAREN
 
 
 class SetIntersection(Grammar, ExpressionAction):
 
-    grammar = SET_INTERSECTION + LPAREN + delimited_list(Array) + RPAREN
+    grammar = SET_INTERSECTION + LPAREN + DelimitedList(Array) + RPAREN
 
 
 class SetIsSubset(Grammar, ExpressionAction):
 
-    grammar = SET_IS_SUBSET + LPAREN + delimited_list(Array, min=2, max=2) + RPAREN
+    grammar = SET_IS_SUBSET + LPAREN + DelimitedList(Array, min=2, max=2) + RPAREN
 
 
 class SetUnion(Grammar, ExpressionAction):
 
-    grammar = SET_UNION + LPAREN + delimited_list(Array) + RPAREN
+    grammar = SET_UNION + LPAREN + DelimitedList(Array) + RPAREN
 
 
 SetExpression = (

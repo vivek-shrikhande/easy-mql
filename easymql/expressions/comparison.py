@@ -3,9 +3,9 @@ from easymql.basics import LPAREN, RPAREN
 from easymql.identifiers import CMP
 from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
-from easymql.utils import delimited_list
+from easymql.utils import DelimitedList
 
 
 class Cmp(Grammar, ExpressionAction):
 
-    grammar = CMP + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
+    grammar = CMP + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN

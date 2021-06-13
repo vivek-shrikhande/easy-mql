@@ -3,7 +3,7 @@ from easymql.basics import LPAREN, RPAREN
 from easymql.identifiers import *
 from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
-from easymql.utils import delimited_list
+from easymql.utils import DelimitedList
 
 
 class Abs(Grammar, ExpressionAction):
@@ -13,7 +13,7 @@ class Abs(Grammar, ExpressionAction):
 
 class Add(Grammar, ExpressionAction):
 
-    grammar = ADD + LPAREN + delimited_list(expression_proxy) + RPAREN
+    grammar = ADD + LPAREN + DelimitedList(expression_proxy) + RPAREN
 
 
 class Ceil(Grammar, ExpressionAction):
@@ -23,7 +23,7 @@ class Ceil(Grammar, ExpressionAction):
 
 class Divide(Grammar, ExpressionAction):
 
-    grammar = DIVIDE + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
+    grammar = DIVIDE + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
 
 
 class Exp(Grammar, ExpressionAction):
@@ -43,7 +43,7 @@ class Ln(Grammar, ExpressionAction):
 
 class Log(Grammar, ExpressionAction):
 
-    grammar = LOG + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
+    grammar = LOG + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
 
 
 class Log10(Grammar, ExpressionAction):
@@ -53,22 +53,22 @@ class Log10(Grammar, ExpressionAction):
 
 class Mod(Grammar, ExpressionAction):
 
-    grammar = MOD + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
+    grammar = MOD + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
 
 
 class Multiply(Grammar, ExpressionAction):
 
-    grammar = MULTIPLY + LPAREN + delimited_list(expression_proxy) + RPAREN
+    grammar = MULTIPLY + LPAREN + DelimitedList(expression_proxy) + RPAREN
 
 
 class Pow(Grammar, ExpressionAction):
 
-    grammar = POW + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
+    grammar = POW + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
 
 
 class Round(Grammar, ExpressionAction):
 
-    grammar = ROUND + LPAREN + delimited_list(expression_proxy, min=1, max=2) + RPAREN
+    grammar = ROUND + LPAREN + DelimitedList(expression_proxy, min=1, max=2) + RPAREN
 
 
 class Sqrt(Grammar, ExpressionAction):
@@ -78,14 +78,12 @@ class Sqrt(Grammar, ExpressionAction):
 
 class Subtract(Grammar, ExpressionAction):
 
-    grammar = (
-        SUBTRACT + LPAREN + delimited_list(expression_proxy, min=2, max=2) + RPAREN
-    )
+    grammar = SUBTRACT + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
 
 
 class Trunc(Grammar, ExpressionAction):
 
-    grammar = TRUNC + LPAREN + delimited_list(expression_proxy, min=1, max=2) + RPAREN
+    grammar = TRUNC + LPAREN + DelimitedList(expression_proxy, min=1, max=2) + RPAREN
 
 
 ArithmeticExpression = (

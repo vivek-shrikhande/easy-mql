@@ -4,12 +4,12 @@ from easymql.basics import *
 from easymql.core import QuotedString
 from easymql.meta import Grammar
 from easymql.proxies import expression_proxy
-from easymql.utils import delimited_list
+from easymql.utils import DelimitedList
 
 
 class Array(Grammar):
 
-    grammar = LBRACK + delimited_list(expression_proxy, min=0, max=...) + RBRACK
+    grammar = LBRACK + DelimitedList(expression_proxy, min=0, max=...) + RBRACK
 
     @classmethod
     def action(cls, tokens):
@@ -27,7 +27,7 @@ class KeyValuePair(Grammar):
 
 class Object(Grammar):
 
-    grammar = LBRACE + delimited_list(KeyValuePair, min=0, max=...) + RBRACE
+    grammar = LBRACE + DelimitedList(KeyValuePair, min=0, max=...) + RBRACE
 
     @classmethod
     def action(cls, tokens):
