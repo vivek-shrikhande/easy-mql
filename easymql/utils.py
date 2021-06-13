@@ -47,7 +47,3 @@ def safe_cast_int(int_str):
         return int(int_str)
     except Exception:
         return int_str
-
-
-def keyword_group(keyword_string):
-    return And(map(Keyword, keyword_string.split()))
