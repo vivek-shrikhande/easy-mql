@@ -4,7 +4,6 @@ from easymql.core import (
     Literal,
     Keyword,
     And,
-    ParseExpression,
     Adapter,
 )
 
@@ -37,7 +36,7 @@ class DelimitedList(Adapter):
                 return expr + (Suppress(delimiter) + expr)[min - 1, max - 1]
 
     def __str__(self):
-        if isinstance(self.expr.get_adapter_grammar(), ParseExpression):
+        if isinstance(self.expr.get_adapter_grammar(), And):
             return f'{{ {self.expr._grammar} }}...'
         else:
             return f'{self.expr._grammar}...'

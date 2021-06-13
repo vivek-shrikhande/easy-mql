@@ -66,7 +66,7 @@ class Adapter:
         return not (self == other)
 
     def __getitem__(self, key):
-        return Adapter(self.grammar[key])
+        return MultipleMatch(self, key)
 
     def __mul__(self, other):
         return Adapter(self.grammar.__mul__(other._grammar))
@@ -195,7 +195,11 @@ class Literal(Adapter):
 
 class Optional(Adapter):
     def __init__(self, expr):
+        self.expr = expr
         super(Optional, self).__init__(PpOptional(expr._grammar))
+
+    def __str__(self):
+        return f'[ {self.expr._grammar} ]'
 
 
 class White(Adapter):
@@ -266,6 +270,24 @@ class And(ParseExpression):
 class HashComment(Adapter):
     def __init__(self):
         super(HashComment, self).__init__(pythonStyleComment)
+
+
+class MultipleMatch(Adapter):
+    """Unlike others, this class does not use any specific PyParsing class.
+
+    self.grammar here can be pyparsing.OneOrMore or pyparsing.ZeroOrMore.
+    This class is created to override str behaviour of those classes.
+    """
+
+    def __init__(self, expr, key):
+        self.expr = expr
+        super(MultipleMatch, self).__init__(expr.grammar[key])
+
+    def __str__(self):
+        if isinstance(self.expr.get_adapter_grammar(), And):
+            return f'{{ {self.expr._grammar} }}...'
+        else:
+            return f'{self.expr._grammar}...'
 
 
 sci_real = Adapter(pyparsing_common.sci_real)
