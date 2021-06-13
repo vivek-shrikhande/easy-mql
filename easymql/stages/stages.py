@@ -359,6 +359,7 @@ class Facet(Grammar):
         added that are supported in FACET"""
 
         allowed_stages = Forward()
+        allowed_stages.set_name('pipeline')
 
         grammar = LPAREN + allowed_stages[1, ...] + RPAREN + Suppress(AS) + Field
 
@@ -379,6 +380,7 @@ class UnionWith(Grammar):
     added that are supported in UNION WITH"""
 
     allowed_stages = Forward()
+    allowed_stages.set_name('pipeline')
 
     grammar = (
         UNION
