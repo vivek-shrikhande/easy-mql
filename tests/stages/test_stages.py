@@ -328,6 +328,21 @@ class TestStages:
         with raises(ParseException):
             Stages.parse('SAMPLE ;')
 
+    def test_set(self):
+        assert Stages.parse(
+            'SET SUM(homework) AS totalHomework, SUM(quiz) AS totalQuiz;'
+        ) == {
+            '$set': {
+                'totalHomework': {'$sum': ['$homework']},
+                'totalQuiz': {'$sum': ['$quiz']},
+            }
+        }
+        assert Stages.parse('SET "unleaded" AS specs.fuel_type;') == {
+            '$set': {'specs.fuel_type': 'unleaded'}
+        }
+        with raises(ParseException):
+            Stages.parse('SET ;')
+
     def test_skip(self):
         assert Stages.parse('OFFSET 30;') == {'$skip': Integer(30)}
         assert Stages.parse('SKIP 30;') == {'$skip': Integer(30)}
@@ -656,7 +671,7 @@ class TestStages:
             }
         )
 
-    def test_stages(self):
+    def test_union_with(self):
         # without coll
         with raises(ParseException):
             Stages.parse('UNION WITH ;')
