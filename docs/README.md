@@ -57,10 +57,10 @@ EasyMQL has also got a nice little Query Composer for you to write queries.
 See Getting Started section for more
 
 > [!NOTE|label:Licensing Notice]
-> The short descriptions and examples of [operators](operator.md) and [stages](stages.md) are derived from the
-> [aggregation-pipeline-operators](https://docs.mongodb.com/manual/reference/operator/aggregation/) and
-> [aggregation-pipeline-stages](https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/)
-> by [MongoDB](https://docs.mongodb.com/) respectively,
-> used under [CC BY](https://creativecommons.org/licenses/by-nc-sa/3.0/).
+> - The short descriptions and examples of [operators](operator.md) and [stages](stages.md) are derived from the
+>   [aggregation-pipeline-operators](https://docs.mongodb.com/manual/reference/operator/aggregation/) and
+>   [aggregation-pipeline-stages](https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/)
+>   by [MongoDB](https://docs.mongodb.com/) respectively,
+>   used under [CC BY](https://creativecommons.org/licenses/by-nc-sa/3.0/).
 > 
-> This documentation is licensed under [CC BY](https://creativecommons.org/licenses/by-nc-sa/3.0/).
+> - This documentation is licensed under [CC BY](https://creativecommons.org/licenses/by-nc-sa/3.0/).
