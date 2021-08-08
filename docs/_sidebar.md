@@ -3,5 +3,6 @@
   - [Install](install.md)
   
 - Reference
-  - [Operators](operators.md)
+  - [Data Types](datatypes.md)
+  - [Functions](functions.md)
   - [Stages](stages.md)
