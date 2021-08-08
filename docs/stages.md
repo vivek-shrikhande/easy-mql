@@ -11,13 +11,13 @@ Link to MongoDB [$addFields](https://docs.mongodb.com/manual/reference/operator/
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 ADD FIELDS expression1 AS field_name1, ..., expressionN AS field_nameN;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 ADD FIELDS SUM(homework) AS totalHomework, SUM(quiz) AS totalQuiz;
 ```
 
@@ -31,7 +31,7 @@ Link to MongoDB [$bucket](https://docs.mongodb.com/manual/reference/operator/agg
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 BUCKET BY expression BOUNDARIES array [ DEFAULT string ] [ PROJECT accumulator_expression AS field_name ] ;
 
 where,
@@ -50,7 +50,7 @@ accumulator_expression = ADD_TO_SET(expression)
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 BUCKET BY year_born
 BOUNDARIES [1840 + 5, 1850, 1860, 1870, 1880]
 DEFAULT "Other"
@@ -71,13 +71,13 @@ Link to MongoDB [$count](https://docs.mongodb.com/manual/reference/operator/aggr
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 COUNT AS field_name;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 COUNT AS 'doc count';
 COUNT AS doc_count;
 ```
@@ -93,13 +93,13 @@ Link to MongoDB [$facet](https://docs.mongodb.com/manual/reference/operator/aggr
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 FACET ( pipline1 ) AS field_name1, ..., ( piplineN ) AS field_nameN;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 FACET
 (
     UNWIND tags;
@@ -130,7 +130,7 @@ Link to MongoDB [$group](https://docs.mongodb.com/manual/reference/operator/aggr
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 GROUP BY expression PROJECT group_exp AS field_name1, ..., group_exp AS field_nameN;
 
 group_exp = ADD_TO_SET(expression)
@@ -148,7 +148,7 @@ group_exp = ADD_TO_SET(expression)
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 GROUP BY item PROJECT SUM(1) AS count, SUM(price * quantity) AS totalSaleAmount;
 ```
 
@@ -163,13 +163,13 @@ Link to MongoDB [$limit](https://docs.mongodb.com/manual/reference/operator/aggr
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 LIMIT positive_integer;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 LIMIT 5;
 ```
 
@@ -187,13 +187,13 @@ Link to MongoDB [$lookup](https://docs.mongodb.com/manual/reference/operator/agg
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 LOOKUP collection_name ON local_field = foreign_field AS field_name;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 LOOKUP inventory ON 'item' = 'sku' AS 'inventories';
 ```
 
@@ -208,13 +208,13 @@ Link to MongoDB [$match](https://docs.mongodb.com/manual/reference/operator/aggr
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 MATCH expression;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 MATCH score > 20 OR score < 90;
 ```
 
@@ -231,7 +231,7 @@ Link to MongoDB [$merge](https://docs.mongodb.com/manual/reference/operator/aggr
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 MERGE INTO [ [ DB db_name ] COLL collection_name ]
 [ ON field1, field2, ..., fieldN ]
 [ WHEN MATCHED THEN
@@ -253,7 +253,7 @@ where pipeline can only consist of the following stages:
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 MERGE INTO DB voting COLL monthlytotals
 ON _id, month
 WHEN MATCHED THEN
@@ -279,13 +279,13 @@ Link to MongoDB [$out](https://docs.mongodb.com/manual/reference/operator/aggreg
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 OUTPUT TO [ [ DB db_name ] COLL collection_name ];
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 OUTPUT TO DB reporting COLL author;
 ```
 
@@ -300,7 +300,7 @@ Link to MongoDB [$project](https://docs.mongodb.com/manual/reference/operator/ag
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 PROJECT element1, ..., <elementN;
 
 where,
@@ -312,7 +312,7 @@ element = field
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 PROJECT title, -publisher, +age, author.first AS first_name;
 ```
 
@@ -328,13 +328,13 @@ Link to MongoDB [$redact](https://docs.mongodb.com/manual/reference/operator/agg
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 REDACT expression;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 REDACT IF ( SIZE ( SET_INTERSECTION ( tags, [ "STLW", "G" ] ) ) > 0, "$$DESCEND", "$$PRUNE" );
 ```
 
@@ -351,13 +351,13 @@ Link to MongoDB [$replaceRoot](https://docs.mongodb.com/manual/reference/operato
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 REPLACE ROOT expression;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 REPLACE ROOT MERGE_OBJECTS({"_id": _id, "first":"", "last":""}, name);
 ```
 
@@ -374,13 +374,13 @@ Link to MongoDB [$replaceWith](https://docs.mongodb.com/manual/reference/operato
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 REPLACE WITH expression;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 REPLACE WITH MERGE_OBJECTS({"_id": _id, "first":"", "last":""}, name);
 ```
 
@@ -394,13 +394,13 @@ Link to MongoDB [$sample](https://docs.mongodb.com/manual/reference/operator/agg
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 SAMPLE positive_integer;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 SAMPLE 3;
 ```
 
@@ -417,13 +417,13 @@ Link to MongoDB [$set](https://docs.mongodb.com/manual/reference/operator/aggreg
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 SET expression1 AS field_name1, ..., expressionN AS field_nameN;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 SET SUM(homework) AS totalHomework, SUM(quiz) AS totalQuiz;
 ```
 
@@ -439,13 +439,13 @@ Link to MongoDB [$skip](https://docs.mongodb.com/manual/reference/operator/aggre
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 (SKIP | OFFSET) positive_integer;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 SKIP 5;
 OFFSET 5;
 ```
@@ -461,14 +461,14 @@ Link to MongoDB [$sort](https://docs.mongodb.com/manual/reference/operator/aggre
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 (SORT | ORDER) BY field1 sort_order, ..., fieldN sort_order;
 where sort_order = DESC | ASC
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 SORT BY age DESC, posts ASC;
 ```
 
@@ -483,13 +483,13 @@ Link to MongoDB [$sortByCount](https://docs.mongodb.com/manual/reference/operato
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 SORT BY COUNT expression;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 SORT BY COUNT tags;
 ```
 
@@ -503,7 +503,7 @@ Link to MongoDB [$unionWith](https://docs.mongodb.com/manual/reference/operator/
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 UNION WITH collection_name [ WITH PIPELINE (
     stage1;
     stage2;
@@ -513,7 +513,7 @@ UNION WITH collection_name [ WITH PIPELINE (
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 UNION WITH warehouses WITH PIPELINE ( PROJECT +state, -_id; );
 ```
 
@@ -527,13 +527,13 @@ Link to MongoDB [$unset](https://docs.mongodb.com/manual/reference/operator/aggr
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 UNSET field1, field2, ..., fieldN;
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 UNSET author, name;
 ```
 
@@ -549,13 +549,13 @@ Link to MongoDB [$unwind](https://docs.mongodb.com/manual/reference/operator/agg
 
 ### Syntax
 
-```EASY-MQL
+```EasyMQL
 UNWIND field_path ARRAY INDEX AS field_name PRESERVE NULL EMPTY ARRAYS (true | false);
 ```
 
 ### Example
 
-```EASY-MQL
+```EasyMQL
 UNWIND sizes ARRAY INDEX AS arrayIndex PRESERVE NULL EMPTY ARRAYS true;
 ```
 
