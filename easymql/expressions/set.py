@@ -27,7 +27,9 @@ class Any(Grammar, ExpressionAction):
 
 class SetDifference(Grammar, ExpressionAction):
 
-    grammar = SET_DIFFERENCE + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
+    grammar = (
+        SET_DIFFERENCE + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
+    )
 
 
 class SetEquals(Grammar, ExpressionAction):
@@ -42,7 +44,9 @@ class SetIntersection(Grammar, ExpressionAction):
 
 class SetIsSubset(Grammar, ExpressionAction):
 
-    grammar = SET_IS_SUBSET + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
+    grammar = (
+        SET_IS_SUBSET + LPAREN + DelimitedList(expression_proxy, min=2, max=2) + RPAREN
+    )
 
 
 class SetUnion(Grammar, ExpressionAction):
