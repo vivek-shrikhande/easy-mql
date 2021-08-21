@@ -10,24 +10,20 @@ class TestSetExpression:
         cls.exp = Expression
 
     def test_all_elements_true(self):
-        assert self.exp.parse('ALL_ELEMENTS_TRUE([ true, 1, "someString", false])') == {
+        assert self.exp.parse('ALL([ true, 1, "someString", false])') == {
             '$allElementsTrue': [[True, 1, 'someString', False]]
         }
 
         with raises(ParseException):
-            self.exp.parse('ALL_ELEMENTS_TRUE(1.2)')
-        with raises(ParseException):
-            self.exp.parse('ALL_ELEMENTS_TRUE()')
+            self.exp.parse('ALL()')
 
     def test_any_element_true(self):
-        assert self.exp.parse('ANY_ELEMENT_TRUE([ true, 1, "someString", false])') == {
+        assert self.exp.parse('ANY([ true, 1, "someString", false])') == {
             '$anyElementTrue': [[True, 1, 'someString', False]]
         }
 
         with raises(ParseException):
-            self.exp.parse('ANY_ELEMENT_TRUE(1.2)')
-        with raises(ParseException):
-            self.exp.parse('ANY_ELEMENT_TRUE()')
+            self.exp.parse('ANY()')
 
     def test_set_difference(self):
         assert self.exp.parse('SET_DIFFERENCE( [ "a", "b", "a" ], [ "b", "a" ] )') == {
