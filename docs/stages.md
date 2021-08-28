@@ -1,5 +1,7 @@
 # Stages
 
+Stages in EasyMQL correspond to [Aggregation Pipeline Stages](https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/) in MQL.
+
 ## ADD FIELDS
 
 Adds new fields to documents. Similar to [PROJECT](#project), ADD FIELDS reshapes each document in the stream;
@@ -232,7 +234,7 @@ Link to MongoDB [$merge](https://docs.mongodb.com/manual/reference/operator/aggr
 ### Syntax
 
 ```EasyMQL
-MERGE INTO [ [ DB db_name ] COLL collection_name ]
+MERGE INTO [ DB db_name ] COLL collection_name
 [ ON field1, field2, ..., fieldN ]
 [ WHEN MATCHED THEN
     REPLACE
@@ -280,7 +282,7 @@ Link to MongoDB [$out](https://docs.mongodb.com/manual/reference/operator/aggreg
 ### Syntax
 
 ```EasyMQL
-OUTPUT TO [ [ DB db_name ] COLL collection_name ];
+OUTPUT TO [ DB db_name ] COLL collection_name;
 ```
 
 ### Example
