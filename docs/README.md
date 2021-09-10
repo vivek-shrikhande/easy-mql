@@ -1,6 +1,6 @@
 # EasyMQL
 
-> *A text based query language for MongoDB.*
+> *An easy-to-use query language for MongoDB.*
 
 EasyMQL is an **Easy**-to-use **M**ongoDB **Q**uery **L**anguage.
 It is text based which means you don't have to use `{` and `}` at all
