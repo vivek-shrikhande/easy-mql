@@ -5,5 +5,6 @@
 - Reference
   - [Data Types](datatypes.md)
   - [Operators](operators.md)
-  - [Functions](functions.md)
+  - [Expressions / Functions](functions.md)
   - [Stages](stages.md)
+  - [Examples](examples.md)

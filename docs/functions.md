@@ -1,6 +1,6 @@
 # Functions
 
-Functions in EasyMQL correspond to [Aggregation Pipeline Operators](https://docs.mongodb.com/manual/reference/operator/aggregation/) in MQL.
+Expressions / Functions in EasyMQL correspond to [Aggregation Pipeline Operators](https://docs.mongodb.com/manual/reference/operator/aggregation/) in MQL.
 
 # Arithmetic Functions
 

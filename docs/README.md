@@ -53,6 +53,8 @@ Here are a couple of examples of MQL, and their corresponding EasyMQL queries,
 >             author.middle) AS author.middle;
 > ```
 
+See [examples](examples.md) section for more.
+
 EasyMQL has also got a nice little Query Composer for you to write queries.
 See Getting Started section for more
 
