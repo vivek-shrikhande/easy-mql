@@ -1,8 +1,9 @@
 - Getting started
-  - [Introduction](intro.md)
-  - [Install](install.md)
+  - [Introduction]()
+  - [How to use](howtouse.md)
   
 - Reference
+  - [Basics](basics.md)
   - [Data Types](datatypes.md)
   - [Operators](operators.md)
   - [Expressions / Functions](functions.md)
