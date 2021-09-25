@@ -47,6 +47,11 @@ Set `HOST` and `PORT` environment variables to override default host `0.0.0.0` a
 
 Set `HOST` and `PORT` environment variables to override default host `0.0.0.0` and port `5000` values respectively.
 
+### Usage
+
+Watch this **~80 seconds** video on how to use the composer.
+
+[easymql](usagevideo.html ':include')
 
 ----
 
