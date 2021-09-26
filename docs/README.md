@@ -9,7 +9,7 @@ around all the constructs. In the case of operators, you use only `+`
 instead of `$add`, `-` instead of `$subtract` and so on. No more confusion
 between fields & field paths and when to prefix `$` & when not to.
 
-Also, few constructs are similar those in SQL so that if you're familiar
+Also, few constructs are similar to those in SQL so that if you're familiar
 with SQL you don't have to learn another syntax for the same purpose; for
 example, `CASE`, `EXTRACT`, `IF`, `IF_NULL`, operators, etc. In some ways
 it looks like SQL but not exactly.
@@ -66,5 +66,7 @@ See [Query Composer](http://localhost:3000/#/howtouse?id=_1-query-composer) sect
 >   is a derivative of [aggregation-pipeline-operators](https://docs.mongodb.com/manual/reference/operator/aggregation/)
 >   and [aggregation-pipeline-stages](https://docs.mongodb.com/manual/reference/operator/aggregation-pipeline/) by
 >   [MongoDB](https://docs.mongodb.com/), used under [CC BY](https://creativecommons.org/licenses/by-nc-sa/3.0/).
-> 
+>
 > - This documentation is licensed under [CC BY](https://creativecommons.org/licenses/by-nc-sa/3.0/).
+>
+> - The EasyMQL package is licensed under [MIT](https://github.com/vivek-shrikhande/easy-mql/blob/main/LICENSE).
