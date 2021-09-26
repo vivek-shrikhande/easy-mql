@@ -18,6 +18,8 @@
 > MATCH totalSaleAmount >= 100;
 > ```
 
+----
+
 > ```MQL
 > [
 >    { $match: { _id: 1 } },
@@ -30,6 +32,8 @@
 > ADD FIELDS
 >     ARRAY_CONCAT(homework, [7]) AS homework;
 > ```
+
+----
 
 > ```MQL
 > [
@@ -51,6 +55,8 @@
 > COUNT AS passing_scores;
 > ```
 
+----
+
 > ```MQL
 > [ { $project : { "author.first" : 0, "lastModified" : 0 } } ]
 > ```
@@ -58,6 +64,8 @@
 > ```EasyMQL
 > PROJECT -author.first, -lastModified;
 > ```
+
+----
 
 > ```MQL
 > [
