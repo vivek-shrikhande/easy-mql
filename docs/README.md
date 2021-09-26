@@ -59,7 +59,9 @@ Here are a couple of examples of MQL, and their corresponding EasyMQL queries,
 See [examples](examples.md) section for more.
 
 EasyMQL has also got a nice little-weight Query Composer for writing queries.
-See [Query Composer](http://localhost:3000/#/howtouse?id=_1-query-composer) section for more
+See [Query Composer](http://localhost:3000/#/howtouse?id=_1-query-composer) section for more.
+
+See [reference](basics.md) section for language syntax/semantics.
 
 > [!NOTE|label:Licensing Notice]
 > - Part of this documentation (short descriptions and examples of [operators](operator.md) and [stages](stages.md))
