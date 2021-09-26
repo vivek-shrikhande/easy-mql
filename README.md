@@ -1,4 +1,4 @@
-# easy-mql
+# EasyMQL
 An easy-to-use query language for MongoDB.
 
 ## Documentation
