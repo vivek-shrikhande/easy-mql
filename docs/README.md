@@ -3,7 +3,7 @@
 > *An easy-to-use query language for MongoDB.*
 
 EasyMQL is an **Easy**-to-use **M**ongoDB **Q**uery **L**anguage.
-It solves the pain points in writing bson based mongoDB queries
+It solves few difficulties in writing bson based mongoDB queries
 (the official **MQL**). For instance, you don't have to use `{` and `}`
 around all the constructs. In the case of operators, you use only `+`
 instead of `$add`, `-` instead of `$subtract` and so on. No more confusion
